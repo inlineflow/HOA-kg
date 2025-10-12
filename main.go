@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"hypermedia/internal/component"
 	"os"
 )
 
 func main() {
-	component := hello("John")
-	component.Render(context.Background(), os.Stdout)
+	c := component.Hello("John")
+	c.Render(context.Background(), os.Stdout)
 }
