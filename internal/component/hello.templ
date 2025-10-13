@@ -3,9 +3,9 @@ package component
 import "fmt"
 
 func InterpolateGreetings(name string) string {
-return fmt.Sprintf("Hello, %s", name)
+	return fmt.Sprintf("Hello, %s", name)
 }
 
 templ Hello(name string) {
-<div class="bg-yellow-">{ InterpolateGreetings(name) }</div>
+	<div class="">{ InterpolateGreetings(name) }</div>
 }
