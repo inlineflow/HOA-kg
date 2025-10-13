@@ -1,0 +1,47 @@
+package component
+
+import (
+	"fmt"
+	"hypermedia/internal/models"
+)
+
+templ Contacts(contacts []models.Contact) {
+	@BaseLayout("Contacts") {
+		<div>
+			<form action="/contacts" method="get">
+				<label for="search" class="label">Search Term</label>
+				<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
+				<input type="submit" value="Search"/>
+			</form>
+			<div class="max-w-256">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>First </th>
+							<th>Last </th>
+							<th>Phone </th>
+							<th>Email </th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, v := range contacts {
+							<tr>
+								<td>{ v.First }</td>
+								<td>{ v.Last }</td>
+								<td>{ v.Phone }</td>
+								<td>{ v.Email }</td>
+								<td>
+									<a href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>Edit</a>
+									<a href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>View</a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<p>
+					<a href="/contacts/new">Add Contact</a>
+				</p>
+			</div>
+		</div>
+	}
+}

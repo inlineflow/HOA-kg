@@ -1,22 +1,40 @@
 package main
 
 import (
-	// "context"
 	"context"
 	"fmt"
 	"hypermedia/internal/component"
+	"hypermedia/internal/models"
 	"log"
 	"net/http"
-	// "os"
-	// "github.com/a-h/templ"
 )
 
 var dev = true
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("serving root")
-	c := component.Hello("Big")
-	c.Render(context.Background(), w)
+	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
+func handleContacts(w http.ResponseWriter, r *http.Request) {
+	searchTerm := r.URL.Query().Get("q")
+	contacts := []models.Contact{
+		models.Contact{
+			ID:    "1",
+			First: "John",
+			Last:  "Rambo",
+			Phone: "1111",
+		},
+		models.Contact{
+			ID:    "2",
+			First: "Sylvester",
+			Last:  "Stalone",
+			Phone: "2222",
+		},
+	}
+	fmt.Println("serving /contacts")
+	c := component.Contacts(contacts)
+	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
+	c.Render(ctx, w)
 }
 
 func disableCacheInDevMode(next http.Handler) http.Handler {
@@ -37,6 +55,8 @@ func main() {
 	serveMux.Handle("/assets/",
 		disableCacheInDevMode(
 			http.StripPrefix("/assets", http.FileServer(http.Dir("assets")))))
+
+	serveMux.HandleFunc("/contacts", handleContacts)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err := server.ListenAndServe()
