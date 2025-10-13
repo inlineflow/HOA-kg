@@ -1,6 +1,6 @@
 @echo off
 wt ^
-    --title "Templ Watch" cmd.exe /k "templ generate --watch --proxy=\"http://localhost:8080\" --open-browser=false -v --cmd=\"go run .\"" ^
+    --title "Templ Watch" cmd.exe /k "templ generate --watch --proxy=\"http://localhost:8080\" --open-browser=false" ^
 ; ^
     --title "Go Server (Air)" cmd.exe /k "go.exe run github.com/air-verse/air@v1.63.0 --build.cmd \"go.exe build -o tmp/bin/main.exe\" --build.bin \"tmp/bin/main.exe\" --build.delay \"100\" --build.exclude_dir \"node_modules\" --build.include_ext \"go\" --build.stop_on_error \"false\" --misc.clean_on_exit true" ^
 ; ^

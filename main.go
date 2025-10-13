@@ -15,7 +15,7 @@ var dev = true
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("serving root")
-	c := component.Hello("Fredder4")
+	c := component.Hello("Big")
 	c.Render(context.Background(), w)
 }
 
@@ -38,9 +38,11 @@ func main() {
 		disableCacheInDevMode(
 			http.StripPrefix("/assets", http.FileServer(http.Dir("assets")))))
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
+	fmt.Println("Started on localhost:8080")
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// c.Render(context.Background(), os.Stdout)
 }
