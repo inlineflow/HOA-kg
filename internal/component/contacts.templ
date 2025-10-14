@@ -21,11 +21,11 @@ templ ContactList(contacts []models.Contact) {
 }
 
 templ ContactSearch() {
-	<form action="/contacts" method="get">
+	<div id="search-container">
 		<label for="search" class="label">Search Term</label>
 		<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
-		<button hx-post="/partials/contacts" hx-target="#main">Search</button>
-	</form>
+		<button hx-post="/partials/contacts" hx-target="#search-container" hx-include="search">Search</button>
+	</div>
 }
 
 templ ContactsFormList(contacts []models.Contact) {
@@ -165,9 +165,7 @@ templ EditContact(c models.Contact) {
 				<button>Save</button>
 			</fieldset>
 		</form>
-		<form action="/contacts/{{ contact.id }}/delete" method="post">
-			<button>Delete Contact</button>
-		</form>
+		<button hx-delete={ fmt.Sprintf("/contacts/%s", c.ID) }>Delete Contact</button>
 		<p>
 			<a href="/contacts/">Back</a>
 		</p>
