@@ -29,6 +29,13 @@ var contacts []models.Contact
 // 	},
 // }
 
+func handlePartialContacts(w http.ResponseWriter, r *http.Request) {
+	searchTerm := r.URL.Query().Get("q")
+	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
+	c := component.ContactsFormList(contacts)
+	c.Render(ctx, w)
+}
+
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
@@ -93,6 +100,26 @@ func disableCacheInDevMode(next http.Handler) http.Handler {
 	})
 }
 
+func handleContactEdit(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("contact_id")
+	var c models.Contact
+	for _, v := range contacts {
+		if v.ID == id {
+			c = v
+			break
+		}
+	}
+
+	if c.ID == "" {
+		w.WriteHeader(404)
+		w.Write([]byte("Error, contact not found"))
+		return
+	}
+
+	view := component.EditContact(c)
+	view.Render(context.Background(), w)
+}
+
 func main() {
 	// c := component.Hello("John")
 	contacts = []models.Contact{
@@ -119,6 +146,8 @@ func main() {
 	serveMux.HandleFunc("GET /contacts/new", handleGetContactsNew)
 	serveMux.HandleFunc("POST /contacts/new", handlePostContactsNew)
 	serveMux.HandleFunc("GET /contacts/{contact_id}", handleGetContactByID)
+	serveMux.HandleFunc("GET /contacts/{contact_id}/edit", handleContactEdit)
+	serveMux.HandleFunc("GET /partials/contacts", handlePartialContacts)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err := server.ListenAndServe()

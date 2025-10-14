@@ -5,43 +5,80 @@ import (
 	"hypermedia/internal/models"
 )
 
+templ ContactList(contacts []models.Contact) {
+	for _, v := range contacts {
+		<tr>
+			<td>{ v.First }</td>
+			<td>{ v.Last }</td>
+			<td>{ v.Phone }</td>
+			<td>{ v.Email }</td>
+			<td>
+				<a href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>Edit</a>
+				<a href={ fmt.Sprintf("/contacts/%s", v.ID) }>View</a>
+			</td>
+		</tr>
+	}
+}
+
+templ ContactSearch() {
+	<form action="/contacts" method="get">
+		<label for="search" class="label">Search Term</label>
+		<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
+		<button hx-post="/partials/contacts" hx-target="#main">Search</button>
+	</form>
+}
+
+templ ContactsFormList(contacts []models.Contact) {
+	@ContactSearch()
+	<div class="max-w-256">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>First </th>
+					<th>Last </th>
+					<th>Phone </th>
+					<th>Email </th>
+				</tr>
+			</thead>
+			<tbody>
+				@ContactList(contacts)
+			</tbody>
+		</table>
+		<p>
+			<a href="/contacts/new">Add Contact</a>
+		</p>
+	</div>
+}
+
 templ GetContacts(contacts []models.Contact) {
 	@BaseLayout("Contacts") {
-		<div>
-			<form action="/contacts" method="get">
-				<label for="search" class="label">Search Term</label>
-				<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
-				<input type="submit" value="Search"/>
-			</form>
-			<div class="max-w-256">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>First </th>
-							<th>Last </th>
-							<th>Phone </th>
-							<th>Email </th>
-						</tr>
-					</thead>
-					<tbody>
-						for _, v := range contacts {
-							<tr>
-								<td>{ v.First }</td>
-								<td>{ v.Last }</td>
-								<td>{ v.Phone }</td>
-								<td>{ v.Email }</td>
-								<td>
-									<a href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>Edit</a>
-									<a href={ fmt.Sprintf("/contacts/%s", v.ID) }>View</a>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-				<p>
-					<a href="/contacts/new">Add Contact</a>
-				</p>
-			</div>
+		<div id="main">
+			<button hx-get="/partials/contacts" hx-target="#main">
+				Get the contacts
+			</button>
+			<!-- <form action="/contacts" method="get">
+    <label for="search" class="label">Search Term</label>
+    <input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input" />
+    <input type="submit" value="Search" />
+    </form>
+    <div class="max-w-256">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>First </th>
+            <th>Last </th>
+            <th>Phone </th>
+            <th>Email </th>
+          </tr>
+        </thead>
+        <tbody>
+          @ContactList(contacts)
+        </tbody>
+      </table>
+      <p>
+        <a href="/contacts/new">Add Contact</a>
+      </p>
+    </div> -->
 		</div>
 	}
 }
@@ -97,5 +134,42 @@ templ ContactDetails(c models.Contact) {
 				<a href="/contacts">Back</a>
 			</p>
 		</div>
+	}
+}
+
+templ EditContact(c models.Contact) {
+	@BaseLayout(fmt.Sprintf("Edit %s %s", c.First, c.Last)) {
+		<form action="/c./{ c.id }/edit" method="post">
+			<fieldset>
+				<legend>c.Values</legend>
+				<p>
+					<label for="email">Email</label>
+					<input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/>
+					<span class="error">{ c.Errors["email"] }</span>
+				</p>
+				<p>
+					<label for="first_name">First Name</label>
+					<input name="first_name" id="first_name" type="text" placeholder="First Name" value={ c.First }/>
+					<span class="error">{ c.Errors["first"] }</span>
+				</p>
+				<p>
+					<label for="last_name">Last Name</label>
+					<input name="last_name" id="last_name" type="text" placeholder="Last Name" value={ c.Last }/>
+					<span class="error">{ c.Errors["last"] }</span>
+				</p>
+				<p>
+					<label for="phone">Phone</label>
+					<input name="phone" id="phone" type="text" placeholder="Phone" value={ c.Phone }/>
+					<span class="error">{ c.Errors["phone"] }</span>
+				</p>
+				<button>Save</button>
+			</fieldset>
+		</form>
+		<form action="/contacts/{{ contact.id }}/delete" method="post">
+			<button>Delete Contact</button>
+		</form>
+		<p>
+			<a href="/contacts/">Back</a>
+		</p>
 	}
 }
