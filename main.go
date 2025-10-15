@@ -247,15 +247,15 @@ func (cfg *APIConfig) handleDeleteContact(w http.ResponseWriter, r *http.Request
 
 func (cfg *APIConfig) handleValidateEmail(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("validating email")
-	id := r.PathValue("contact_id")
 	newEmail := r.URL.Query().Get("email")
+	if newEmail == "" {
+		return
+	}
 	fmt.Println("new email: ", newEmail)
 	errs := []string{}
 	for _, v := range cfg.db.GetContacts() {
-		if v.ID == id {
-			if v.Email == newEmail {
-				errs = append(errs, "This email is already registered.")
-			}
+		if v.Email == newEmail {
+			errs = append(errs, "This email is already registered.")
 		}
 	}
 

@@ -81,12 +81,13 @@ templ formField(val, name, contactID, inputType, errors string) {
 		value={ val }
 		class="input"
 		hx-get={ fmt.Sprintf("/contacts/%s/%s", contactID, name) }
+		hx-trigger="change, keyup delay:200ms changed"
 		hx-target="next .alert"
 	/>
 	if (len(errors) > 0) {
 		<span id={ fmt.Sprintf("error-msg-%s", name) } class="alert alert-error alert-outline py-1 mt-2">{ errors }</span>
 	} else {
-		<span id={ fmt.Sprintf("error-msg-%s", name) } class="hidden alert alert-error alert-outline py-1 mt-2"></span>
+		<span id={ fmt.Sprintf("error-msg-%s", name) } class="invisible alert alert-error alert-outline py-1 mt-2"></span>
 	}
 }
 
@@ -140,25 +141,37 @@ templ EditContact(c models.Contact) {
 			<fieldset>
 				<legend class="fieldset-legend">Contact fields</legend>
 				<p>
-					<label for="email">Email</label>
-					<input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/>
-					<span class="error">{ c.Errors["email"] }</span>
+					@formField(c.Email, "email", c.ID, "email", c.Errors["email"])
 				</p>
 				<p>
-					<label for="first_name">First Name</label>
-					<input name="first_name" id="first_name" type="text" placeholder="First Name" value={ c.First }/>
-					<span class="error">{ c.Errors["first"] }</span>
+					@formField(c.First, "first_name", c.ID, "text", c.Errors["first"])
 				</p>
 				<p>
-					<label for="last_name">Last Name</label>
-					<input name="last_name" id="last_name" type="text" placeholder="Last Name" value={ c.Last }/>
-					<span class="error">{ c.Errors["last"] }</span>
+					@formField(c.Last, "last_name", c.ID, "text", c.Errors["last"])
 				</p>
 				<p>
-					<label for="phone">Phone</label>
-					<input name="phone" id="phone" type="text" placeholder="Phone" value={ c.Phone }/>
-					<span class="error">{ c.Errors["phone"] }</span>
+					@formField(c.Phone, "phone", c.ID, "text", c.Errors["phone"])
 				</p>
+				<!-- <p> -->
+				<!-- <label for="email">Email</label> -->
+				<!-- <input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/> -->
+				<!-- <span class="error">{ c.Errors["email"] }</span> -->
+				<!-- </p> -->
+				<!-- <p> -->
+				<!-- <label for="first_name">First Name</label> -->
+				<!-- <input name="first_name" id="first_name" type="text" placeholder="First Name" value={ c.First }/> -->
+				<!-- <span class="error">{ c.Errors["first"] }</span> -->
+				<!-- </p> -->
+				<!-- <p> -->
+				<!-- <label for="last_name">Last Name</label> -->
+				<!-- <input name="last_name" id="last_name" type="text" placeholder="Last Name" value={ c.Last }/> -->
+				<!-- <span class="error">{ c.Errors["last"] }</span> -->
+				<!-- </p> -->
+				<!-- <p> -->
+				<!-- <label for="phone">Phone</label> -->
+				<!-- <input name="phone" id="phone" type="text" placeholder="Phone" value={ c.Phone }/> -->
+				<!-- <span class="error">{ c.Errors["phone"] }</span> -->
+				<!-- </p> -->
 				<button>Save</button>
 			</fieldset>
 		</form>
@@ -171,5 +184,18 @@ templ EditContact(c models.Contact) {
 		<p>
 			<a href="/contacts/">Back</a>
 		</p>
+		<script defer>
+  document.querySelector("body").addEventListener("htmx:afterSwap", e => {
+    console.log(e)
+    const t = e.target;
+    if (t.id.includes("error-msg-")) {
+      if (t.textContent.length === 0) {
+        t.classList.add("invisible")
+      } else {
+        t.classList.remove("invisible")
+      }
+    }
+  })
+</script>
 	}
 }
