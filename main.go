@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -244,6 +245,25 @@ func (cfg *APIConfig) handleDeleteContact(w http.ResponseWriter, r *http.Request
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
+func (cfg *APIConfig) handleValidateEmail(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("validating email")
+	id := r.PathValue("contact_id")
+	newEmail := r.URL.Query().Get("email")
+	fmt.Println("new email: ", newEmail)
+	errs := []string{}
+	for _, v := range cfg.db.GetContacts() {
+		if v.ID == id {
+			if v.Email == newEmail {
+				errs = append(errs, "This email is already registered.")
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		w.Write([]byte(strings.Join(errs, " ")))
+	}
+}
+
 func main() {
 	// c := component.Hello("John")
 	contacts, err := loadContacts()
@@ -262,10 +282,11 @@ func main() {
 	serveMux.HandleFunc("GET /contacts", cfg.handleGetContacts)
 	serveMux.HandleFunc("GET /contacts/new", cfg.handleGetContactsNew)
 	serveMux.HandleFunc("POST /contacts/new", cfg.handlePostContactsNew)
+	serveMux.HandleFunc("GET /contacts/{contact_id}/email", cfg.handleValidateEmail)
 	serveMux.HandleFunc("GET /contacts/{contact_id}", cfg.handleGetContactByID)
 	serveMux.HandleFunc("GET /contacts/{contact_id}/edit", cfg.handleContactEdit)
 	serveMux.HandleFunc("POST /contacts/{contact_id}/edit", cfg.handlePostEditContact)
-	serveMux.HandleFunc("POST /contacts/{contact_id}/delete", cfg.handleDeleteContact)
+	serveMux.HandleFunc("DELETE /contacts/{contact_id}", cfg.handleDeleteContact)
 	serveMux.HandleFunc("GET /partials/contacts", cfg.handlePartialContacts)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")

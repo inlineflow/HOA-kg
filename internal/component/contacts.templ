@@ -3,7 +3,16 @@ package component
 import (
 	"fmt"
 	"hypermedia/internal/models"
+	"strings"
 )
+
+func capitalize(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+
+	return strings.ToUpper(string(s[0])) + strings.ToLower(s[1:])
+}
 
 templ ContactList(contacts []models.Contact) {
 	for _, v := range contacts {
@@ -62,35 +71,44 @@ templ GetContacts(contacts []models.Contact) {
 	}
 }
 
+templ formField(val, name, contactID, inputType, errors string) {
+	<label for={ name } class="label">{ capitalize(name) }</label>
+	<input
+		name={ name }
+		id={ name }
+		type="text"
+		placeholder={ capitalize(name) }
+		value={ val }
+		class="input"
+		hx-get={ fmt.Sprintf("/contacts/%s/%s", contactID, name) }
+		hx-target="next .alert"
+	/>
+	if (len(errors) > 0) {
+		<span id={ fmt.Sprintf("error-msg-%s", name) } class="alert alert-error alert-outline py-1 mt-2">{ errors }</span>
+	} else {
+		<span id={ fmt.Sprintf("error-msg-%s", name) } class="hidden alert alert-error alert-outline py-1 mt-2"></span>
+	}
+}
+
 templ NewContact(c models.Contact) {
 	@BaseLayout("New contact") {
 		<div>
 			<form action="/contacts/new" method="post">
 				<fieldset class="fieldset">
-					<legend>Contact Values</legend>
+					<legend class="fieldset-legend">Contact Values</legend>
 					<p>
-						<label for="email" class="label">Email</label>
-						<input name="email" id="email" type="email" placeholder="Email" value={ c.Email } class="input"/>
-						<div role="alert" class="alert alert-error alert-outline">
-							<span>{ c.Errors["email"] }</span>
-						</div>
+						@formField(c.Email, "email", c.ID, "email", c.Errors["email"])
 					</p>
 					<p>
-						<label for="first_name" class="label">First Name</label>
-						<input name="first_name" id="first_name" type="text" placeholder="First Name" value={ c.First } class="input"/>
-						<span class="error">{ c.Errors["first"] }</span>
+						@formField(c.First, "first_name", c.ID, "text", c.Errors["first"])
 					</p>
 					<p>
-						<label for="last_name" class="label">Last Name</label>
-						<input name="last_name" id="last_name" type="text" placeholder="Last Name" value={ c.Last } class="input"/>
-						<span class="error">{ c.Errors["last"] }</span>
+						@formField(c.Last, "last_name", c.ID, "text", c.Errors["last"])
 					</p>
 					<p>
-						<label for="phone" class="label">Phone</label>
-						<input name="phone" id="phone" type="text" placeholder="Phone" value={ c.Phone } class="input"/>
-						<span class="error">{ c.Errors["phone"] }</span>
+						@formField(c.Phone, "phone", c.ID, "text", c.Errors["phone"])
 					</p>
-					<button>Save</button>
+					<button class="btn btn-primary">Save</button>
 					<p>
 						<a href="/contacts/">Back</a>
 					</p>
@@ -120,7 +138,7 @@ templ EditContact(c models.Contact) {
 	@BaseLayout(fmt.Sprintf("Edit %s %s", c.First, c.Last)) {
 		<form action={ fmt.Sprintf("/contacts/%s/edit", c.ID) } method="post">
 			<fieldset>
-				<legend>Contact fields</legend>
+				<legend class="fieldset-legend">Contact fields</legend>
 				<p>
 					<label for="email">Email</label>
 					<input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/>
@@ -144,9 +162,12 @@ templ EditContact(c models.Contact) {
 				<button>Save</button>
 			</fieldset>
 		</form>
-		<form action={ fmt.Sprintf("/contacts/%s/delete", c.ID) } method="post">
-			<button>Delete contact</button>
-		</form>
+		<button
+			hx-delete={ fmt.Sprintf("/contacts/%s", c.ID) }
+			hx-target="body"
+			hx-push-url="true"
+			hx-confirm="Are you sure you want to delete this contact?"
+		>Delete contact</button>
 		<p>
 			<a href="/contacts/">Back</a>
 		</p>
