@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"hypermedia/internal/component"
 	"hypermedia/internal/models"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 )
 
 var dev = true
-var contacts []models.Contact
 
 // contacts := []models.Contact{
 // 	{
@@ -29,10 +30,11 @@ var contacts []models.Contact
 // 	},
 // }
 
-func handlePartialContacts(w http.ResponseWriter, r *http.Request) {
+// func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("q")
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
-	c := component.ContactsFormList(contacts)
+	c := component.ContactsFormList(cfg.db.GetContacts())
 	c.Render(ctx, w)
 }
 
@@ -40,21 +42,19 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
-func handleGetContacts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(contacts)
+func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) {
 	searchTerm := r.URL.Query().Get("q")
-	fmt.Println("serving /contacts")
-	c := component.GetContacts(contacts)
+	c := component.GetContacts(cfg.db.GetContacts())
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
 	c.Render(ctx, w)
 }
 
-func handleGetContactsNew(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handleGetContactsNew(w http.ResponseWriter, r *http.Request) {
 	c := component.NewContact(models.Contact{})
 	c.Render(context.Background(), w)
 }
 
-func handlePostContactsNew(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handlePostContactsNew(w http.ResponseWriter, r *http.Request) {
 	m := models.Contact{
 		First: r.FormValue("first_name"),
 		Last:  r.FormValue("last_name"),
@@ -63,15 +63,16 @@ func handlePostContactsNew(w http.ResponseWriter, r *http.Request) {
 		ID:    uuid.NewString(),
 	}
 
-	contacts = append(contacts, m)
+	cfg.db.AddContact(m)
+	// contacts = append(contacts, m)
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 
 }
 
-func handleGetContactByID(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handleGetContactByID(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("contact_id")
 	var c models.Contact
-	for _, v := range contacts {
+	for _, v := range cfg.db.GetContacts() {
 		if v.ID == id {
 			c = v
 			break
@@ -100,10 +101,10 @@ func disableCacheInDevMode(next http.Handler) http.Handler {
 	})
 }
 
-func handleContactEdit(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handleContactEdit(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("contact_id")
 	var c models.Contact
-	for _, v := range contacts {
+	for _, v := range cfg.db.GetContacts() {
 		if v.ID == id {
 			c = v
 			break
@@ -120,37 +121,155 @@ func handleContactEdit(w http.ResponseWriter, r *http.Request) {
 	view.Render(context.Background(), w)
 }
 
+type DB struct {
+	Data []models.Contact
+}
+
+func (db *DB) GetContacts() []models.Contact {
+	return db.Data
+}
+
+func (db *DB) UpdateContact(newC models.Contact) {
+	for i, v := range db.Data {
+		if v.ID == newC.ID {
+			db.Data[i] = newC
+		}
+	}
+
+	writeContacts(db.Data)
+
+}
+
+func (db *DB) DeleteContact(id string) {
+	i := -1
+	for j, v := range db.Data {
+		if v.ID == id {
+			i = j
+		}
+	}
+
+	db.Data = append(db.Data[:i], db.Data[i+1:]...)
+	writeContacts(db.Data)
+}
+
+func (db *DB) AddContact(c models.Contact) {
+	db.Data = append(db.Data, c)
+	writeContacts(db.Data)
+}
+
+func (db *DB) ReloadContactDB(contacts []models.Contact) {
+	db.Data = contacts
+}
+
+type DBX interface {
+	GetContacts() []models.Contact
+	AddContact(c models.Contact)
+	UpdateContact(c models.Contact)
+	DeleteContact(id string)
+	ReloadContactDB(contacts []models.Contact)
+}
+
+func loadContacts() ([]models.Contact, error) {
+	fileBytes, err := os.ReadFile("data.json")
+	if err != nil {
+		return nil, err
+	}
+
+	var contacts []models.Contact
+	err = json.Unmarshal(fileBytes, &contacts)
+	if err != nil {
+		return nil, err
+	}
+
+	return contacts, nil
+}
+
+func writeContacts(contacts []models.Contact) error {
+	f, err := os.Create("data.json")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	data, err := json.Marshal(contacts)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type APIConfig struct {
+	db DBX
+}
+
+func (cfg *APIConfig) writeAndLoadContacts(contacts []models.Contact) error {
+	err := writeContacts(contacts)
+	if err != nil {
+		return fmt.Errorf("Error while writing contacts: %v", err)
+	}
+
+	c, err := loadContacts()
+	if err != nil {
+		return fmt.Errorf("Error while loading contacts after write: %v", err)
+	}
+
+	cfg.db.ReloadContactDB(c)
+	return nil
+}
+
+func (cfg *APIConfig) handlePostEditContact(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("contact_id")
+	m := models.Contact{
+		First: r.FormValue("first_name"),
+		Last:  r.FormValue("last_name"),
+		Phone: r.FormValue("phone"),
+		Email: r.FormValue("email"),
+		ID:    id,
+	}
+
+	cfg.db.UpdateContact(m)
+	http.Redirect(w, r, fmt.Sprintf("/contacts/%s", m.ID), http.StatusSeeOther)
+}
+
+func (cfg *APIConfig) handleDeleteContact(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Handling delete")
+	id := r.PathValue("contact_id")
+	cfg.db.DeleteContact(id)
+	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
 func main() {
 	// c := component.Hello("John")
-	contacts = []models.Contact{
-		{
-			ID:    uuid.NewString(),
-			First: "John",
-			Last:  "Rambo",
-			Phone: "1111",
-		},
-		{
-			ID:    uuid.NewString(),
-			First: "Sylvester",
-			Last:  "Stalone",
-			Phone: "2222",
-		},
+	contacts, err := loadContacts()
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	db := DB{contacts}
+	cfg := &APIConfig{&db}
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/", handleRoot)
 	serveMux.Handle("/assets/",
 		disableCacheInDevMode(
 			http.StripPrefix("/assets", http.FileServer(http.Dir("assets")))))
 
-	serveMux.HandleFunc("GET /contacts", handleGetContacts)
-	serveMux.HandleFunc("GET /contacts/new", handleGetContactsNew)
-	serveMux.HandleFunc("POST /contacts/new", handlePostContactsNew)
-	serveMux.HandleFunc("GET /contacts/{contact_id}", handleGetContactByID)
-	serveMux.HandleFunc("GET /contacts/{contact_id}/edit", handleContactEdit)
-	serveMux.HandleFunc("GET /partials/contacts", handlePartialContacts)
+	serveMux.HandleFunc("GET /contacts", cfg.handleGetContacts)
+	serveMux.HandleFunc("GET /contacts/new", cfg.handleGetContactsNew)
+	serveMux.HandleFunc("POST /contacts/new", cfg.handlePostContactsNew)
+	serveMux.HandleFunc("GET /contacts/{contact_id}", cfg.handleGetContactByID)
+	serveMux.HandleFunc("GET /contacts/{contact_id}/edit", cfg.handleContactEdit)
+	serveMux.HandleFunc("POST /contacts/{contact_id}/edit", cfg.handlePostEditContact)
+	serveMux.HandleFunc("POST /contacts/{contact_id}/delete", cfg.handleDeleteContact)
+	serveMux.HandleFunc("GET /partials/contacts", cfg.handlePartialContacts)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

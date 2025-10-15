@@ -53,32 +53,11 @@ templ ContactsFormList(contacts []models.Contact) {
 templ GetContacts(contacts []models.Contact) {
 	@BaseLayout("Contacts") {
 		<div id="main">
-			<button hx-get="/partials/contacts" hx-target="#main">
-				Get the contacts
-			</button>
-			<!-- <form action="/contacts" method="get">
-    <label for="search" class="label">Search Term</label>
-    <input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input" />
-    <input type="submit" value="Search" />
-    </form>
-    <div class="max-w-256">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>First </th>
-            <th>Last </th>
-            <th>Phone </th>
-            <th>Email </th>
-          </tr>
-        </thead>
-        <tbody>
-          @ContactList(contacts)
-        </tbody>
-      </table>
-      <p>
-        <a href="/contacts/new">Add Contact</a>
-      </p>
-    </div> -->
+			<!-- @ContactSearch() -->
+			@ContactsFormList(contacts)
+			<!-- <button hx-get="/partials/contacts" hx-target="#main"> -->
+			<!-- 	Get the contacts -->
+			<!-- </button> -->
 		</div>
 	}
 }
@@ -139,9 +118,9 @@ templ ContactDetails(c models.Contact) {
 
 templ EditContact(c models.Contact) {
 	@BaseLayout(fmt.Sprintf("Edit %s %s", c.First, c.Last)) {
-		<form action="/c./{ c.id }/edit" method="post">
+		<form action={ fmt.Sprintf("/contacts/%s/edit", c.ID) } method="post">
 			<fieldset>
-				<legend>c.Values</legend>
+				<legend>Contact fields</legend>
 				<p>
 					<label for="email">Email</label>
 					<input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/>
@@ -165,7 +144,9 @@ templ EditContact(c models.Contact) {
 				<button>Save</button>
 			</fieldset>
 		</form>
-		<button hx-delete={ fmt.Sprintf("/contacts/%s", c.ID) }>Delete Contact</button>
+		<form action={ fmt.Sprintf("/contacts/%s/delete", c.ID) } method="post">
+			<button>Delete contact</button>
+		</form>
 		<p>
 			<a href="/contacts/">Back</a>
 		</p>
