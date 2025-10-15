@@ -59,11 +59,21 @@ templ ContactsFormList(contacts []models.Contact) {
 	</div>
 }
 
-templ GetContacts(contacts []models.Contact) {
+templ GetContacts(contacts []models.Contact, page int) {
 	@BaseLayout("Contacts") {
 		<div id="main">
 			<!-- @ContactSearch() -->
 			@ContactsFormList(contacts)
+			<div>
+				<span class="float-right">
+					if page > 1 {
+						<a href={ fmt.Sprintf("/contacts?page=%s", page-1) }>Previous</a>
+					}
+					if len(contacts) == 10 {
+						<a href={ fmt.Sprintf("/contacts?page=%s", page+1) }>Next</a>
+					}
+				</span>
+			</div>
 			<!-- <button hx-get="/partials/contacts" hx-target="#main"> -->
 			<!-- 	Get the contacts -->
 			<!-- </button> -->
