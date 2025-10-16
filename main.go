@@ -32,23 +32,28 @@ var dev = true
 // 	},
 // }
 
+func filterContacts(q string, c []models.Contact) []models.Contact {
+	result := []models.Contact{}
+	for _, v := range c {
+		if v.Email == q || v.First == q || v.Last == q || v.Phone == q {
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
 // func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
 func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		page = 1
 	}
-
 	contacts := cfg.db.GetContacts()
 	i := (page - 1) * 10
 	j := min(i+10, len(contacts))
-	// if j > len(contacts) {
-	// 	j = len(contacts)
-	// }
-	searchTerm := r.URL.Query().Get("q")
-	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
 	c := component.ContactList(contacts[i:j], page)
-	c.Render(ctx, w)
+	c.Render(context.Background(), w)
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
@@ -60,9 +65,18 @@ func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		page = 1
 	}
+
 	searchTerm := r.URL.Query().Get("q")
+	fmt.Println("search: ", searchTerm)
+	var contacts []models.Contact
+	if searchTerm != "" {
+		contacts = filterContacts(searchTerm, cfg.db.GetContacts())
+	} else {
+		contacts = cfg.db.GetContacts()
+	}
 	i := (page - 1) * 10
-	j := i + 10
+	j := min(i+10, len(contacts))
+	fmt.Println("contacts: ", contacts)
 	c := component.GetContacts(cfg.db.GetContacts()[i:j], page)
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
 	c.Render(ctx, w)
