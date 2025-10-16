@@ -58,7 +58,17 @@ templ ContactList(contacts []models.Contact, page int) {
 templ ContactSearch() {
 	<form id="search-container" class="flex gap-3" action="/contacts" method="get">
 		<label for="search" class="label">Search Term</label>
-		<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
+		<input
+			id="search"
+			type="search"
+			name="q"
+			value={ ctx.Value("search_term").(string) }
+			class="input"
+			hx-get="/contacts"
+			hx-target="tbody"
+			hx-push-url="true"
+			hx-trigger="search, keyup delay:200ms changed"
+		/>
 		<input type="submit" class="btn btn-ghost"/>
 		<!-- <button hx-post="/partials/contacts" hx-target="#search-container" hx-include="search">Search</button> -->
 	</form>

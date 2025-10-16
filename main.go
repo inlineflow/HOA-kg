@@ -61,6 +61,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) {
+
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		page = 1
@@ -77,9 +78,18 @@ func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) 
 	i := (page - 1) * 10
 	j := min(i+10, len(contacts))
 	fmt.Println("contacts: ", contacts)
-	c := component.GetContacts(cfg.db.GetContacts()[i:j], page)
+	fmt.Println("hx-trigger: ", r.Header.Get("HX-Trigger"))
+	if r.Header.Get("HX-Trigger") == "search" {
+		c := component.ContactList(contacts, page)
+		c.Render(context.Background(), w)
+		return
+	}
+
+	c := component.GetContacts(contacts[i:j], page)
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
+
 	c.Render(ctx, w)
+	// c.Render(ctx, os.Stdout)
 }
 
 func (cfg *APIConfig) handleGetContactsNew(w http.ResponseWriter, r *http.Request) {

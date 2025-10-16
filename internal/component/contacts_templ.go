@@ -178,13 +178,13 @@ func ContactSearch() templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(ctx.Value("search_term").(string))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 61, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 65, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"input\"> <input type=\"submit\" class=\"btn btn-ghost\"><!-- <button hx-post=\"/partials/contacts\" hx-target=\"#search-container\" hx-include=\"search\">Search</button> --></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"input\" hx-get=\"/contacts\" hx-target=\"tbody\" hx-push-url=\"true\" hx-trigger=\"search, keyup delay:200ms changed\"> <input type=\"submit\" class=\"btn btn-ghost\"><!-- <button hx-post=\"/partials/contacts\" hx-target=\"#search-container\" hx-include=\"search\">Search</button> --></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,7 +316,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 112, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 122, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -329,7 +329,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(capitalize(name))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 112, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 122, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -342,7 +342,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 114, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 124, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -355,7 +355,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 115, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 125, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -368,7 +368,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(capitalize(name))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 117, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 127, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -381,7 +381,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(val)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 118, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 128, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -394,7 +394,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/contacts/%s/%s", contactID, name))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 120, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 130, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -412,7 +412,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("error-msg-%s", name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 125, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 135, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -425,7 +425,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(errors)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 125, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 135, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -443,7 +443,7 @@ func formField(val, name, contactID, inputType, errors string) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("error-msg-%s", name))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 127, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 137, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -577,7 +577,7 @@ func ContactDetails(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(c.First)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 162, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 172, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -590,7 +590,7 @@ func ContactDetails(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(c.Last)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 162, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 172, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -603,7 +603,7 @@ func ContactDetails(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(c.Phone)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 164, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 174, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -616,7 +616,7 @@ func ContactDetails(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(c.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 165, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 175, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -629,7 +629,7 @@ func ContactDetails(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var33 templ.SafeURL
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/contacts/%s/edit", c.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 168, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 178, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -689,7 +689,7 @@ func EditContact(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var36 templ.SafeURL
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/contacts/%s/edit", c.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 177, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 187, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -734,13 +734,13 @@ func EditContact(c models.Contact) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/contacts/%s", c.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 216, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/contacts.templ`, Line: 226, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\" hx-target=\"body\" hx-push-url=\"true\" hx-confirm=\"Are you sure you want to delete this contact?\">Delete contact</button><p><a href=\"/contacts/\">Back</a></p><script defer>\r\n  document.querySelector(\"body\").addEventListener(\"htmx:afterSwap\", e => {\r\n    console.log(e)\r\n    const t = e.target;\r\n    if (t.id.includes(\"error-msg-\")) {\r\n      if (t.textContent.length === 0) {\r\n        t.classList.add(\"invisible\")\r\n      } else {\r\n        t.classList.remove(\"invisible\")\r\n      }\r\n    }\r\n  })\r\n</script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\" hx-target=\"body\" hx-push-url=\"true\" hx-confirm=\"Are you sure you want to delete this contact?\">Delete contact</button><p><a href=\"/contacts/\">Back</a></p><script defer>\n  document.querySelector(\"body\").addEventListener(\"htmx:afterSwap\", e => {\n    console.log(e)\n    const t = e.target;\n    if (t.id.includes(\"error-msg-\")) {\n      if (t.textContent.length === 0) {\n        t.classList.add(\"invisible\")\n      } else {\n        t.classList.remove(\"invisible\")\n      }\n    }\n  })\n</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
