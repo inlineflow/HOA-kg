@@ -14,7 +14,7 @@ func capitalize(s string) string {
 	return strings.ToUpper(string(s[0])) + strings.ToLower(s[1:])
 }
 
-templ ContactList(contacts []models.Contact) {
+templ ContactList(contacts []models.Contact, page int) {
 	for _, v := range contacts {
 		<tr>
 			<td>{ v.First }</td>
@@ -27,17 +27,31 @@ templ ContactList(contacts []models.Contact) {
 			</td>
 		</tr>
 	}
+	if len(contacts) == 10 {
+		<tr>
+			<td colspan="5" class="text-center">
+				<span
+					hx-target="closest tr"
+					hx-swap="outerHTML"
+					hx-trigger="revealed"
+					hx-get={ fmt.Sprintf("/partials/contacts?page=%d", page+1) }
+				>
+					Loading more...
+				</span>
+			</td>
+		</tr>
+	}
 }
 
 templ ContactSearch() {
-	<div id="search-container">
+	<form id="search-container">
 		<label for="search" class="label">Search Term</label>
 		<input id="search" type="search" name="q" value={ ctx.Value("search_term").(string) } class="input"/>
 		<button hx-post="/partials/contacts" hx-target="#search-container" hx-include="search">Search</button>
-	</div>
+	</form>
 }
 
-templ ContactsFormList(contacts []models.Contact) {
+templ ContactsFormList(contacts []models.Contact, page int) {
 	@ContactSearch()
 	<div class="max-w-256">
 		<table class="table">
@@ -50,7 +64,7 @@ templ ContactsFormList(contacts []models.Contact) {
 				</tr>
 			</thead>
 			<tbody>
-				@ContactList(contacts)
+				@ContactList(contacts, page)
 			</tbody>
 		</table>
 		<p>
@@ -63,17 +77,17 @@ templ GetContacts(contacts []models.Contact, page int) {
 	@BaseLayout("Contacts") {
 		<div id="main">
 			<!-- @ContactSearch() -->
-			@ContactsFormList(contacts)
-			<div>
-				<span class="float-right">
-					if page > 1 {
-						<a href={ fmt.Sprintf("/contacts?page=%s", page-1) }>Previous</a>
-					}
-					if len(contacts) == 10 {
-						<a href={ fmt.Sprintf("/contacts?page=%s", page+1) }>Next</a>
-					}
-				</span>
-			</div>
+			@ContactsFormList(contacts, page)
+			<!-- <div> -->
+			<!-- 	<span class="float-right"> -->
+			<!-- 		if page > 1 { -->
+			<!-- 			<a href={ fmt.Sprintf("/contacts?page=%d", page-1) }>Previous</a> -->
+			<!-- 		} -->
+			<!-- 		if len(contacts) == 10 { -->
+			<!-- 			<a href={ fmt.Sprintf("/contacts?page=%d", page+1) }>Next</a> -->
+			<!-- 		} -->
+			<!-- 	</span> -->
+			<!-- </div> -->
 			<!-- <button hx-get="/partials/contacts" hx-target="#main"> -->
 			<!-- 	Get the contacts -->
 			<!-- </button> -->
