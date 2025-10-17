@@ -89,6 +89,7 @@ templ ContactSearch() {
 }
 
 templ ContactsFormList(contacts []models.Contact, page int) {
+	@ArchiveDownloadButton()
 	@ContactSearch()
 	<div class="max-w-256">
 		<form>

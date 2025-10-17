@@ -42,7 +42,7 @@ func BaseLayout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/assets/css/styles.css\"><script src=\"/assets/js/htmx.min.js\"></script></head><body hx-boost=\"true\"><header><div class=\"flex flex-col items-center justify-center\"><p class=\"text-3xl font-bold\">CONTACTS.APP</p><p class=\"text-xl\">A demo contacts application </p></div></header><main class=\"mt-8\"><div class=\"flex items-center justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/assets/css/styles.css\"><script src=\"/assets/js/htmx.min.js\"></script><script type=\"module\" src=\"/assets/js/htmx-ext.js\" defer></script></head><body hx-boost=\"true\"><header><div class=\"flex flex-col items-center justify-center\"><p class=\"text-3xl font-bold\">CONTACTS.APP</p><p class=\"text-xl\">A demo contacts application </p></div></header><main class=\"mt-8\"><div class=\"flex items-center justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

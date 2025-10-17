@@ -1,0 +1,7 @@
+package component
+
+templ ArchiveDownloadButton() {
+	<div id="archive-ui" hx-target="this" hx-swap="outerHTML" class="w-full flex p-2 items-center justify-center">
+		<button hx-post="/contacts/archive" class="btn btn-accent btn-ghost ">Download Contact Archive</button>
+	</div>
+}

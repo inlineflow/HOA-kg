@@ -199,11 +199,29 @@ func (db *DB) ReloadContactDB(contacts []models.Contact) {
 	db.Data = contacts
 }
 
+func (db *DB) BulkDelete(ids []string) {
+	idsToDelete := make(map[string]struct{})
+	for _, id := range ids {
+		idsToDelete[id] = struct{}{}
+	}
+
+	newData := []models.Contact{}
+	for _, v := range db.Data {
+		if _, exists := idsToDelete[v.ID]; !exists {
+			newData = append(newData, v)
+		}
+	}
+
+	db.Data = newData
+	writeContacts(db.Data)
+}
+
 type DBX interface {
 	GetContacts() []models.Contact
 	AddContact(c models.Contact)
 	UpdateContact(c models.Contact)
 	DeleteContact(id string)
+	BulkDelete(ids []string)
 	ReloadContactDB(contacts []models.Contact)
 }
 
@@ -310,7 +328,28 @@ func (cfg *APIConfig) handleContactCount(w http.ResponseWriter, r *http.Request)
 }
 
 func (cfg *APIConfig) handleDeleteContacts(w http.ResponseWriter, r *http.Request) {
+	selectedIDsStr := r.URL.Query().Get("selected_contact_ids")
 
+	searchTerm := r.URL.Query().Get("q")
+	IDs := strings.Split(selectedIDsStr, ",")
+	fmt.Println(IDs)
+	// for _, v := range cfg.db.GetContacts() {
+	// 	for _, j := range IDs {
+	// 		if v.ID == j {
+	// 			fmt.Println("Matched on ", j)
+	// 			cfg.db.DeleteContact(j)
+	// 		}
+	// 	}
+	// }
+	cfg.db.BulkDelete(IDs)
+	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
+	c := component.GetContacts(cfg.db.GetContacts(), 1)
+	c.Render(ctx, w)
+	// fmt.Println(r)
+	// fmt.Println(r.Form)
+	// fmt.Println("query: ", r.URL.Query())
+	// fmt.Println("r.PostForm: ", r.PostForm)
+	// fmt.Println(IDs)
 }
 
 func main() {
