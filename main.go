@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -261,7 +262,8 @@ func writeContacts(contacts []models.Contact) error {
 }
 
 type APIConfig struct {
-	db DBX
+	db       DBX
+	archiver *Archiver
 }
 
 func (cfg *APIConfig) writeAndLoadContacts(contacts []models.Contact) error {
@@ -352,6 +354,43 @@ func (cfg *APIConfig) handleDeleteContacts(w http.ResponseWriter, r *http.Reques
 	// fmt.Println(IDs)
 }
 
+type Archiver struct {
+	state    string
+	progress float32
+}
+
+func NewArchiver() *Archiver {
+	return &Archiver{
+		state:    "Waiting",
+		progress: 0,
+	}
+}
+
+func (a *Archiver) Status() string {
+	return a.state
+}
+
+func (cfg *APIConfig) handleContactsArchive(w http.ResponseWriter, r *http.Request) {
+	go func() {
+		if cfg.archiver.state != "Running" {
+			cfg.archiver.state = "Running"
+			cfg.archiver.progress = 0
+		}
+
+		ticker := time.NewTicker(300 * time.Millisecond)
+		defer ticker.Stop()
+
+		for {
+			<-ticker.C
+			cfg.archiver.progress += 0.1
+			if cfg.archiver.progress == 1.0 {
+				return
+			}
+		}
+	}()
+
+}
+
 func main() {
 	// c := component.Hello("John")
 	contacts, err := loadContacts()
@@ -360,7 +399,7 @@ func main() {
 	}
 
 	db := DB{contacts}
-	cfg := &APIConfig{&db}
+	cfg := &APIConfig{&db, NewArchiver()}
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/", handleRoot)
 	serveMux.Handle("/assets/",
@@ -378,6 +417,7 @@ func main() {
 	serveMux.HandleFunc("DELETE /contacts/{contact_id}", cfg.handleDeleteContactByID)
 	serveMux.HandleFunc("GET /partials/contacts", cfg.handlePartialContacts)
 	serveMux.HandleFunc("GET /contacts/count", cfg.handleContactCount)
+	serveMux.HandleFunc("POST /contacts/archive", cfg.handleContactsArchive)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err = server.ListenAndServe()
