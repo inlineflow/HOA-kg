@@ -61,14 +61,12 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) {
-
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		page = 1
 	}
 
 	searchTerm := r.URL.Query().Get("q")
-	fmt.Println("search: ", searchTerm)
 	var contacts []models.Contact
 	if searchTerm != "" {
 		contacts = filterContacts(searchTerm, cfg.db.GetContacts())
@@ -77,8 +75,6 @@ func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) 
 	}
 	i := (page - 1) * 10
 	j := min(i+10, len(contacts))
-	fmt.Println("contacts: ", contacts)
-	fmt.Println("hx-trigger: ", r.Header.Get("HX-Trigger"))
 	if r.Header.Get("HX-Trigger") == "search" {
 		c := component.ContactList(contacts, page)
 		c.Render(context.Background(), w)
@@ -89,7 +85,6 @@ func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) 
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
 
 	c.Render(ctx, w)
-	// c.Render(ctx, os.Stdout)
 }
 
 func (cfg *APIConfig) handleGetContactsNew(w http.ResponseWriter, r *http.Request) {
@@ -280,11 +275,14 @@ func (cfg *APIConfig) handlePostEditContact(w http.ResponseWriter, r *http.Reque
 	http.Redirect(w, r, fmt.Sprintf("/contacts/%s", m.ID), http.StatusSeeOther)
 }
 
-func (cfg *APIConfig) handleDeleteContact(w http.ResponseWriter, r *http.Request) {
+func (cfg *APIConfig) handleDeleteContactByID(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Handling delete")
 	id := r.PathValue("contact_id")
 	cfg.db.DeleteContact(id)
-	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+	if r.Header.Get("HX-Trigger") == "delete-form" {
+		http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+	}
+
 }
 
 func (cfg *APIConfig) handleValidateEmail(w http.ResponseWriter, r *http.Request) {
@@ -306,6 +304,15 @@ func (cfg *APIConfig) handleValidateEmail(w http.ResponseWriter, r *http.Request
 	}
 }
 
+func (cfg *APIConfig) handleContactCount(w http.ResponseWriter, r *http.Request) {
+	countStr := fmt.Sprintf("%d total contacts", len(cfg.db.GetContacts()))
+	w.Write([]byte(countStr))
+}
+
+func (cfg *APIConfig) handleDeleteContacts(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func main() {
 	// c := component.Hello("John")
 	contacts, err := loadContacts()
@@ -322,14 +329,16 @@ func main() {
 			http.StripPrefix("/assets", http.FileServer(http.Dir("assets")))))
 
 	serveMux.HandleFunc("GET /contacts", cfg.handleGetContacts)
+	serveMux.HandleFunc("DELETE /contacts", cfg.handleDeleteContacts)
 	serveMux.HandleFunc("GET /contacts/new", cfg.handleGetContactsNew)
 	serveMux.HandleFunc("POST /contacts/new", cfg.handlePostContactsNew)
 	serveMux.HandleFunc("GET /contacts/{contact_id}/email", cfg.handleValidateEmail)
 	serveMux.HandleFunc("GET /contacts/{contact_id}", cfg.handleGetContactByID)
 	serveMux.HandleFunc("GET /contacts/{contact_id}/edit", cfg.handleContactEdit)
 	serveMux.HandleFunc("POST /contacts/{contact_id}/edit", cfg.handlePostEditContact)
-	serveMux.HandleFunc("DELETE /contacts/{contact_id}", cfg.handleDeleteContact)
+	serveMux.HandleFunc("DELETE /contacts/{contact_id}", cfg.handleDeleteContactByID)
 	serveMux.HandleFunc("GET /partials/contacts", cfg.handlePartialContacts)
+	serveMux.HandleFunc("GET /contacts/count", cfg.handleContactCount)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err = server.ListenAndServe()

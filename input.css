@@ -1,4 +1,9 @@
 @import "tailwindcss" source(none);
-/* @source "../../components/*.{templ}"; */
 @source "internal/component/*.{templ}";
 @plugin "daisyui";
+
+@layer utilities {
+  tr.htmx-swapping {
+    @apply transition-opacity duration-1000 opacity-0 ease-out;
+  }
+}
