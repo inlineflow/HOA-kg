@@ -3,6 +3,7 @@ package component
 import (
 	"fmt"
 	"hypermedia/internal/models"
+	"hypermedia/internal/services"
 	"strings"
 )
 
@@ -89,7 +90,6 @@ templ ContactSearch() {
 }
 
 templ ContactsFormList(contacts []models.Contact, page int) {
-	@ArchiveDownloadButton()
 	@ContactSearch()
 	<div class="max-w-256">
 		<form>
@@ -120,9 +120,10 @@ templ ContactsFormList(contacts []models.Contact, page int) {
 	</div>
 }
 
-templ GetContacts(contacts []models.Contact, page int) {
+templ GetContacts(contacts []models.Contact, page int, a *services.Archiver) {
 	@BaseLayout("Contacts") {
 		<div id="main">
+			@ArchiveDownloadButton(a)
 			<!-- @ContactSearch() -->
 			@ContactsFormList(contacts, page)
 			<p hx-get="/contacts/count" hx-trigger="revealed">

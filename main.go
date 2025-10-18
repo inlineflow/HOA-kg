@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"hypermedia/internal/component"
 	"hypermedia/internal/models"
+	"hypermedia/internal/services"
 	"log"
 	"net/http"
 	"os"
@@ -17,21 +18,6 @@ import (
 )
 
 var dev = true
-
-// contacts := []models.Contact{
-// 	{
-// 		ID:    "1",
-// 		First: "John",
-// 		Last:  "Rambo",
-// 		Phone: "1111",
-// 	},
-// 	{
-// 		ID:    "2",
-// 		First: "Sylvester",
-// 		Last:  "Stalone",
-// 		Phone: "2222",
-// 	},
-// }
 
 func filterContacts(q string, c []models.Contact) []models.Contact {
 	result := []models.Contact{}
@@ -82,7 +68,7 @@ func (cfg *APIConfig) handleGetContacts(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	c := component.GetContacts(contacts[i:j], page)
+	c := component.GetContacts(contacts[i:j], page, cfg.archiver)
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
 
 	c.Render(ctx, w)
@@ -263,7 +249,7 @@ func writeContacts(contacts []models.Contact) error {
 
 type APIConfig struct {
 	db       DBX
-	archiver *Archiver
+	archiver *services.Archiver
 }
 
 func (cfg *APIConfig) writeAndLoadContacts(contacts []models.Contact) error {
@@ -345,7 +331,7 @@ func (cfg *APIConfig) handleDeleteContacts(w http.ResponseWriter, r *http.Reques
 	// }
 	cfg.db.BulkDelete(IDs)
 	ctx := context.WithValue(context.Background(), "search_term", searchTerm)
-	c := component.GetContacts(cfg.db.GetContacts(), 1)
+	c := component.GetContacts(cfg.db.GetContacts(), 1, cfg.archiver)
 	c.Render(ctx, w)
 	// fmt.Println(r)
 	// fmt.Println(r.Form)
@@ -354,41 +340,16 @@ func (cfg *APIConfig) handleDeleteContacts(w http.ResponseWriter, r *http.Reques
 	// fmt.Println(IDs)
 }
 
-type Archiver struct {
-	state    string
-	progress float32
+func (cfg *APIConfig) handlePostContactsArchive(w http.ResponseWriter, r *http.Request) {
+	cfg.archiver.Start()
+	time.Sleep(100 * time.Millisecond)
+	c := component.ArchiveDownloadButton(cfg.archiver)
+	c.Render(context.Background(), w)
 }
 
-func NewArchiver() *Archiver {
-	return &Archiver{
-		state:    "Waiting",
-		progress: 0,
-	}
-}
-
-func (a *Archiver) Status() string {
-	return a.state
-}
-
-func (cfg *APIConfig) handleContactsArchive(w http.ResponseWriter, r *http.Request) {
-	go func() {
-		if cfg.archiver.state != "Running" {
-			cfg.archiver.state = "Running"
-			cfg.archiver.progress = 0
-		}
-
-		ticker := time.NewTicker(300 * time.Millisecond)
-		defer ticker.Stop()
-
-		for {
-			<-ticker.C
-			cfg.archiver.progress += 0.1
-			if cfg.archiver.progress == 1.0 {
-				return
-			}
-		}
-	}()
-
+func (cfg *APIConfig) handleGetContactsArchive(w http.ResponseWriter, r *http.Request) {
+	c := component.ArchiveDownloadButton(cfg.archiver)
+	c.Render(context.Background(), w)
 }
 
 func main() {
@@ -399,7 +360,7 @@ func main() {
 	}
 
 	db := DB{contacts}
-	cfg := &APIConfig{&db, NewArchiver()}
+	cfg := &APIConfig{&db, services.NewArchiver()}
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/", handleRoot)
 	serveMux.Handle("/assets/",
@@ -417,7 +378,8 @@ func main() {
 	serveMux.HandleFunc("DELETE /contacts/{contact_id}", cfg.handleDeleteContactByID)
 	serveMux.HandleFunc("GET /partials/contacts", cfg.handlePartialContacts)
 	serveMux.HandleFunc("GET /contacts/count", cfg.handleContactCount)
-	serveMux.HandleFunc("POST /contacts/archive", cfg.handleContactsArchive)
+	serveMux.HandleFunc("POST /contacts/archive", cfg.handlePostContactsArchive)
+	serveMux.HandleFunc("GET /contacts/archive", cfg.handleGetContactsArchive)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err = server.ListenAndServe()
