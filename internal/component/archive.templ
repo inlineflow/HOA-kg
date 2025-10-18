@@ -15,13 +15,13 @@ templ progressBar(a *services.Archiver) {
 }
 
 templ ArchiveDownloadButton(a *services.Archiver) {
-	<div id="archive-ui" hx-target="this" hx-swap="outerHTML" class="minw-16 w-full flex p-2 items-center justify-center">
+	<div id="archive-ui" hx-target="this" hx-swap="outerHTML" class="min-w-16 w-full flex p-2 items-center justify-center">
 		switch a.Status() {
 			case "Waiting":
 				<!-- @progressBar(a) -->
 				<button hx-post="/contacts/archive" class="btn btn-accent btn-ghost ">Download Contact Archive</button>
 			case "Running":
-				<div hx-get="/contacts/archive" hx-trigger="load delay:500ms">
+				<div hx-get="/contacts/archive" hx-trigger="load delay:500ms" class="w-full">
 					<p>Creating Archive...</p>
 					@progressBar(a)
 				</div>

@@ -87,7 +87,7 @@ func ArchiveDownloadButton(a *services.Archiver) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"archive-ui\" hx-target=\"this\" hx-swap=\"outerHTML\" class=\"minw-16 w-full flex p-2 items-center justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"archive-ui\" hx-target=\"this\" hx-swap=\"outerHTML\" class=\"min-w-16 w-full flex p-2 items-center justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -98,7 +98,7 @@ func ArchiveDownloadButton(a *services.Archiver) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		case "Running":
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div hx-get=\"/contacts/archive\" hx-trigger=\"load delay:500ms\"><p>Creating Archive...</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div hx-get=\"/contacts/archive\" hx-trigger=\"load delay:500ms\" class=\"w-full\"><p>Creating Archive...</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
