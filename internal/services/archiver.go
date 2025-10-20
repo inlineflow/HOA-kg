@@ -17,6 +17,11 @@ func NewArchiver() *Archiver {
 	}
 }
 
+func (a *Archiver) Reset() {
+	a.state = "Waiting"
+	a.progress = 0
+}
+
 func (a *Archiver) Status() string {
 	return a.state
 }
@@ -37,7 +42,7 @@ func (a *Archiver) Start() {
 
 		for {
 			<-ticker.C
-			a.progress += 0.01
+			a.progress += 0.1
 			fmt.Println(a.progress)
 			if a.progress >= 1.0 {
 				a.state = "Finished"

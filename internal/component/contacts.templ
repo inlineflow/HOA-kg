@@ -20,23 +20,30 @@ templ ContactList(contacts []models.Contact, page int) {
 		<!-- <tr class="transition duration-1000 opacity-0 ease-out"> -->
 		<tr>
 			<td>
-				<input type="checkbox" class="checkbox checkbox-primary" name="selected_contact_ids" value={ v.ID }/>
+				<input
+					type="checkbox"
+					class="checkbox checkbox-primary"
+					name="selected_contact_ids"
+					value={ v.ID }
+					x-model="selected"
+				/>
 			</td>
 			<td>{ v.First }</td>
 			<td>{ v.Last }</td>
 			<td>{ v.Phone }</td>
 			<td>{ v.Email }</td>
 			<td>
-				<a class="link" href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>Edit</a>
-				<a class="link" href={ fmt.Sprintf("/contacts/%s", v.ID) }>View</a>
-				<a
-					class="link"
-					href="#"
-					hx-delete={ fmt.Sprintf("/contacts/%s", v.ID) }
-					hx-confirm="Are you sure you want to delete this contact?"
-					hx-target="closest tr"
-					hx-swap="outerHTML swap:1s"
-				>Delete</a>
+				@OverflowMenu(v)
+				<!-- <a class="link" href={ fmt.Sprintf("/contacts/%s/edit", v.ID) }>Edit</a> -->
+				<!-- <a class="link" href={ fmt.Sprintf("/contacts/%s", v.ID) }>View</a> -->
+				<!-- <a -->
+				<!-- 	class="link" -->
+				<!-- 	href="#" -->
+				<!-- 	hx-delete={ fmt.Sprintf("/contacts/%s", v.ID) } -->
+				<!-- 	hx-confirm="Are you sure you want to delete this contact?" -->
+				<!-- 	hx-target="closest tr" -->
+				<!-- 	hx-swap="outerHTML swap:1s" -->
+				<!-- >Delete</a> -->
 			</td>
 		</tr>
 	}
@@ -92,7 +99,17 @@ templ ContactSearch() {
 templ ContactsFormList(contacts []models.Contact, page int) {
 	@ContactSearch()
 	<div class="max-w-256">
-		<form>
+		<form x-data="{selected: [] }">
+			<template x-if="selected.length > 0">
+				<div class="card">
+					<span>
+						<slot x-text="selected.length"></slot> contacts selected
+					</span>
+					<button type="button" class="btn btn-outline btn-secondary">Delete</button>
+					<hr aria-orientation="vertical"/>
+					<button type="button" class="btn" @click="selected = []">Clear</button>
+				</div>
+			</template>
 			<table class="table">
 				<thead>
 					<tr>
@@ -123,7 +140,8 @@ templ ContactsFormList(contacts []models.Contact, page int) {
 templ GetContacts(contacts []models.Contact, page int, a *services.Archiver) {
 	@BaseLayout("Contacts") {
 		<div id="main">
-			@ArchiveDownloadButton(a)
+			@Counter()
+			<!-- @ArchiveDownloadButton(a) -->
 			<!-- @ContactSearch() -->
 			@ContactsFormList(contacts, page)
 			<p hx-get="/contacts/count" hx-trigger="revealed">
@@ -214,26 +232,6 @@ templ EditContact(c models.Contact) {
 				<p>
 					@formField(c.Phone, "phone", c.ID, "text", c.Errors["phone"])
 				</p>
-				<!-- <p> -->
-				<!-- <label for="email">Email</label> -->
-				<!-- <input name="email" id="email" type="text" placeholder="Email" value={ c.Email }/> -->
-				<!-- <span class="error">{ c.Errors["email"] }</span> -->
-				<!-- </p> -->
-				<!-- <p> -->
-				<!-- <label for="first_name">First Name</label> -->
-				<!-- <input name="first_name" id="first_name" type="text" placeholder="First Name" value={ c.First }/> -->
-				<!-- <span class="error">{ c.Errors["first"] }</span> -->
-				<!-- </p> -->
-				<!-- <p> -->
-				<!-- <label for="last_name">Last Name</label> -->
-				<!-- <input name="last_name" id="last_name" type="text" placeholder="Last Name" value={ c.Last }/> -->
-				<!-- <span class="error">{ c.Errors["last"] }</span> -->
-				<!-- </p> -->
-				<!-- <p> -->
-				<!-- <label for="phone">Phone</label> -->
-				<!-- <input name="phone" id="phone" type="text" placeholder="Phone" value={ c.Phone }/> -->
-				<!-- <span class="error">{ c.Errors["phone"] }</span> -->
-				<!-- </p> -->
 				<button>Save</button>
 			</fieldset>
 		</form>

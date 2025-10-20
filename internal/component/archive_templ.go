@@ -32,14 +32,14 @@ func progressBar(a *services.Archiver) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-4 bg-primary\"><div class=\"float-left w-0 h-full leading-loose text-white bg-primary-content\" role=\"progressbar\" aria-valuenow=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-4 bg-primary\"><div id=\"archive-progress\" class=\"float-left w-0 h-full leading-loose text-white bg-primary-content transition-[width] ease-in-out duration-500\" role=\"progressbar\" aria-valuenow=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs((a.Progress() * 100))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/archive.templ`, Line: 11, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/archive.templ`, Line: 12, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -52,7 +52,7 @@ func progressBar(a *services.Archiver) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("width: %.2f%%", (a.Progress() * 100)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/archive.templ`, Line: 12, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/component/archive.templ`, Line: 13, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func ArchiveDownloadButton(a *services.Archiver) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"archive-ui\" hx-target=\"this\" hx-swap=\"outerHTML\" class=\"min-w-16 w-full flex p-2 items-center justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"archive-ui\" hx-target=\"this\" hx-swap=\"outerHTML\" class=\"min-w-16 w-full flex flex-col gap-2 p-2 items-center justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,7 +111,7 @@ func ArchiveDownloadButton(a *services.Archiver) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		case "Finished":
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p>Finished</p><!-- <p>Running...</p> -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a hx-boost=\"false\" href=\"/contacts/archive/file\" class=\"link\">Archive Ready! Click here to download. &downarrow;</a> <button hx-delete=\"/contacts/archive\">Clear Download</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

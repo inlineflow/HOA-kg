@@ -1,0 +1,26 @@
+package component
+
+import (
+	"fmt"
+	"hypermedia/internal/models"
+)
+
+templ OverflowMenu(c models.Contact) {
+	<div data-overflow-menu>
+		<button type="button" aria-haspopup="menu" aria-controls={ "contact-menu-" + c.ID }>Options</button>
+		<div role="menu" hidden id={ "contact-menu-" + c.ID }>
+			<a role="menuitem" href={ fmt.Sprintf("/contacts/%s/edit", c.ID) }>Edit</a>
+			<a class="link" href={ fmt.Sprintf("/contacts/%s", c.ID) } role="menuitem">View</a>
+			<a
+				role="menuitem"
+				class="link"
+				href="#"
+				hx-delete={ fmt.Sprintf("/contacts/%s", c.ID) }
+				hx-confirm="Are you sure you want to delete this contact?"
+				hx-target="closest tr"
+				hx-swap="outerHTML swap:1s"
+			>Delete</a>
+		</div>
+		<script src="/assets/js/overflow-menu.js" defer></script>
+	</div>
+}

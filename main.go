@@ -30,7 +30,6 @@ func filterContacts(q string, c []models.Contact) []models.Contact {
 	return result
 }
 
-// func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
 func (cfg *APIConfig) handlePartialContacts(w http.ResponseWriter, r *http.Request) {
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
@@ -352,6 +351,25 @@ func (cfg *APIConfig) handleGetContactsArchive(w http.ResponseWriter, r *http.Re
 	c.Render(context.Background(), w)
 }
 
+func (cfg *APIConfig) handleDownloadArchive(w http.ResponseWriter, r *http.Request) {
+	file, err := os.Open("data.json")
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+	}
+	defer file.Close()
+
+	w.Header().Set("Content-Disposition", "attachment; filename=data.json")
+	w.Header().Set("Content-Type", "application/octet-stream")
+
+	http.ServeFile(w, r, "data.json")
+}
+
+func (cfg *APIConfig) handleDeleteArchive(w http.ResponseWriter, r *http.Request) {
+	cfg.archiver.Reset()
+	c := component.ArchiveDownloadButton(cfg.archiver)
+	c.Render(context.Background(), w)
+}
+
 func main() {
 	// c := component.Hello("John")
 	contacts, err := loadContacts()
@@ -380,6 +398,8 @@ func main() {
 	serveMux.HandleFunc("GET /contacts/count", cfg.handleContactCount)
 	serveMux.HandleFunc("POST /contacts/archive", cfg.handlePostContactsArchive)
 	serveMux.HandleFunc("GET /contacts/archive", cfg.handleGetContactsArchive)
+	serveMux.HandleFunc("DELETE /contacts/archive", cfg.handleDeleteArchive)
+	serveMux.HandleFunc("GET /contacts/archive/file", cfg.handleDownloadArchive)
 	server := http.Server{Handler: serveMux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
 	err = server.ListenAndServe()

@@ -6,7 +6,8 @@ import "fmt"
 templ progressBar(a *services.Archiver) {
 	<div class="w-full h-4 bg-primary">
 		<div
-			class="float-left w-0 h-full leading-loose text-white bg-primary-content"
+			id="archive-progress"
+			class="float-left w-0 h-full leading-loose text-white bg-primary-content transition-[width] ease-in-out duration-500"
 			role="progressbar"
 			aria-valuenow={ (a.Progress() * 100) }
 			style={ fmt.Sprintf("width: %.2f%%", (a.Progress() * 100)) }
@@ -15,7 +16,12 @@ templ progressBar(a *services.Archiver) {
 }
 
 templ ArchiveDownloadButton(a *services.Archiver) {
-	<div id="archive-ui" hx-target="this" hx-swap="outerHTML" class="min-w-16 w-full flex p-2 items-center justify-center">
+	<div
+		id="archive-ui"
+		hx-target="this"
+		hx-swap="outerHTML"
+		class="min-w-16 w-full flex flex-col gap-2 p-2 items-center justify-center"
+	>
 		switch a.Status() {
 			case "Waiting":
 				<!-- @progressBar(a) -->
@@ -26,8 +32,10 @@ templ ArchiveDownloadButton(a *services.Archiver) {
 					@progressBar(a)
 				</div>
 			case "Finished":
-				<p>Finished</p>
-				<!-- <p>Running...</p> -->
+				<a hx-boost="false" href="/contacts/archive/file" class="link">
+					Archive Ready! Click here to download. &downarrow;
+				</a>
+				<button hx-delete="/contacts/archive">Clear Download</button>
 			default:
 				<button hx-post="/contacts/archive" class="btn btn-accent btn-ghost ">Download Contact Archive</button>
 		}
