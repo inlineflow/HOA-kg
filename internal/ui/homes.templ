@@ -1,18 +1,10 @@
 package ui
 
-import (
-	"hypermedia/internal/models"
-	"hypermedia/internal/ui/components/sidebar"
-)
+import "hypermedia/internal/models"
 
 templ ServeHomes(homes []models.Home) {
-	@BaseLayout("TSJ") {
-		@sidebar.Sidebar() {
-			<div class="flex flex-col justify-center items-center p-24">
-				@HomesGrid(homes)
-				<!-- <div class="bg-red-500 size-40"></div> -->
-			</div>
-		}
+	@SidebarLayout("ТСЖ") {
+		@HomesGrid(homes)
 	}
 }
 
@@ -31,5 +23,18 @@ templ HomesGrid(homes []models.Home) {
 }
 
 templ HomeView(h models.Home) {
-	<div></div>
+	@SidebarLayout(h.Address) {
+		<div>
+			<form>
+				<fieldset class="fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4">
+					<legend class="fieldset-legend">Создание карточек</legend>
+					<label for="from" class="label">С</label>
+					<input type="number" id="from" class="input"/>
+					<label for="to" class="label">По</label>
+					<input type="number" id="to" class="input"/>По
+					<button class="btn btn-neutral mt-4">Создать</button>
+				</fieldset>
+			</form>
+		</div>
+	}
 }
