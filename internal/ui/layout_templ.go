@@ -54,7 +54,7 @@ func BaseLayout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- <div class=\"flex items-center justify-center gap-8\"> --><!--   @Banner() --><!--   @themecontroller.ThemeController() --><!-- </div> --></header><main class=\"mt-8\"><div class=\"flex items-center justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</header><main class=\"mt-8\"><div class=\"flex items-center justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

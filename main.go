@@ -22,7 +22,7 @@ func disableCacheInDevMode(next http.Handler) http.Handler {
 
 func main() {
 
-	cfg := &models.APIConfig{}
+	cfg := models.NewConfig()
 	mux := http.NewServeMux()
 	mux.Handle("/assets/",
 		disableCacheInDevMode(
