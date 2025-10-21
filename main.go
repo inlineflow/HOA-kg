@@ -39,5 +39,4 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// c.Render(context.Background(), os.Stdout)
 }
