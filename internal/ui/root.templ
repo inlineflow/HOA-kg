@@ -1,6 +1,9 @@
 package ui
 
+import "hypermedia/internal/ui/components/sidebar"
+
 templ Root() {
 	@BaseLayout("TSJ") {
+		@sidebar.Sidebar()
 	}
 }

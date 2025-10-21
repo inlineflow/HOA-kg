@@ -1,6 +1,6 @@
 @import "tailwindcss" source(none);
 @source "internal/component/*.{templ}";
-@source "internal/ui/*.{templ}";
+@source "internal/ui/**/*.{templ}";
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
 }
