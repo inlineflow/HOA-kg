@@ -29,7 +29,15 @@ func Sidebar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"drawer\"><input type=\"checkbox\" id=\"my-drawer-1\" class=\"drawer-toggle\"><div class=\"drawer-content\"><label for=\"my-drawer-1\" class=\"btn drawer-button\">Open drawer</label></div><div class=\"drawer-side\"><laber for=\"my-drawer-1\" aria-label=\"close sidebar\" class=\"drawer-overlay\"></laber><ul class=\"menu bg-base-200 min-h-full w-80 p-4\"><li><a>Sidebar Item 1</a></li></ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"drawer\"><input type=\"checkbox\" id=\"my-drawer-1\" class=\"drawer-toggle\"><div class=\"drawer-content\"><!-- <label for=\"my-drawer-1\" class=\"btn drawer-button\">Open drawer</label> --><main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</main></div><div class=\"drawer-side\"><label for=\"my-drawer-1\" aria-label=\"close sidebar\" class=\"drawer-overlay\"></label><ul class=\"menu bg-base-200 min-h-full w-80 p-4\"><li><a>Sidebar Item 1</a></li></ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

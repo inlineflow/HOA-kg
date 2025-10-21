@@ -4,10 +4,13 @@ templ Sidebar() {
 	<div class="drawer">
 		<input type="checkbox" id="my-drawer-1" class="drawer-toggle"/>
 		<div class="drawer-content">
-			<label for="my-drawer-1" class="btn drawer-button">Open drawer</label>
+			<!-- <label for="my-drawer-1" class="btn drawer-button">Open drawer</label> -->
+			<main>
+				{ children... }
+			</main>
 		</div>
 		<div class="drawer-side">
-			<laber for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></laber>
+			<label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></label>
 			<ul class="menu bg-base-200 min-h-full w-80 p-4">
 				<li><a>Sidebar Item 1</a></li>
 			</ul>

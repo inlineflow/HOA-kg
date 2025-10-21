@@ -2,6 +2,7 @@ package ui
 
 import "hypermedia/internal/component"
 import "hypermedia/internal/ui/components/theme-controller"
+import "hypermedia/internal/ui/components"
 
 templ BaseLayout(title string) {
 <!DOCTYPE html>
@@ -13,7 +14,6 @@ templ BaseLayout(title string) {
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>{ title }</title>
   <link rel="stylesheet" href="/assets/css/styles.css" />
-  <!-- @themecontroller.Script() -->
   <script src="/assets/js/htmx.min.js"></script>
   <script type="module" src="/assets/js/htmx-ext.js" defer></script>
   <script type="module" src="/assets/js/alpinejs@3.15.0.js" defer></script>
@@ -22,10 +22,11 @@ templ BaseLayout(title string) {
 <body hx-boost="true">
 
   <header class="p-4">
-    <div class="flex items-center justify-center gap-8">
-      @Banner()
-      @themecontroller.ThemeController()
-    </div>
+    @Navbar()
+    <!-- <div class="flex items-center justify-center gap-8"> -->
+    <!--   @Banner() -->
+    <!--   @themecontroller.ThemeController() -->
+    <!-- </div> -->
   </header>
   <main class="mt-8">
     <div class="flex items-center justify-center">
@@ -40,12 +41,25 @@ templ BaseLayout(title string) {
 }
 
 templ Banner() {
-<div class="flex items-center justify-center gap-2">
+<!-- <div class="flex items-center justify-center gap-2"> -->
+<div class="navbar-center flex items-center justify-center gap-2">
+  <!-- <div class="navbar"> -->
   <p class="text-3xl font-bold">
     @component.HouseIcon(templ.Attributes{
     "size": "48",
     })
   </p>
   <p class="text-3xl">Управдом</p>
+</div>
+}
+
+templ Navbar() {
+<!-- <div class="navbar bg-neutral text-primary-content"> -->
+<div class="navbar">
+  <div class="navbar-start">
+    <label for="my-drawer-1" class="drawer-button cursor-pointer">@components.Menu("size-8")</label>
+  </div>
+  @Banner()
+  @themecontroller.ThemeController()
 </div>
 }
