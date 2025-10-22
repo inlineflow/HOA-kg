@@ -22,7 +22,10 @@ func disableCacheInDevMode(next http.Handler) http.Handler {
 
 func main() {
 
-	cfg := models.NewConfig()
+	cfg, err := models.NewConfig()
+	if err != nil {
+		log.Fatalf("Error while connecting to the database: %v\n", err)
+	}
 	mux := http.NewServeMux()
 	mux.Handle("/assets/",
 		disableCacheInDevMode(
@@ -34,7 +37,7 @@ func main() {
 
 	server := http.Server{Handler: mux, Addr: ":8080"}
 	fmt.Println("Started on localhost:8080")
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,12 +3,14 @@ sql:
   - engine: "postgresql"
     schema: "db/schema"
     queries: "db/queries"
-    out: "internal/database"
-    sql_package: "pgx/v5"
-    sql_driver: "github.com/jackc/pgx/v5"
-    overrides:
-      - db_type: "uuid"
-        go_type: "github.com/google/uuid.UUID"
-      - db_type: "uuid"
-        go_type: "github.com/google/uuid.UUID"
-        nullable: yes
+    gen:
+      go:
+        out: "internal/database"
+        sql_package: "pgx/v5"
+        sql_driver: "github.com/jackc/pgx/v5"
+        overrides:
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
+            nullable: yes
