@@ -1,3 +1,5 @@
 node_modules/
 tmp/
 assets/css/styles.css
+scripts/windows/setvars.bat
+.env

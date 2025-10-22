@@ -72,15 +72,15 @@ func (u *UI) CreateAppartments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apppartments := []models.Appartment{}
+	appartments := []models.Appartment{}
 	for i := from; i <= to; i++ {
-		apppartments = append(apppartments, models.Appartment{
+		appartments = append(appartments, models.Appartment{
 			ID:         uuid.NewString(),
 			FlatNumber: i,
 		})
 	}
 
-	u.cfg.Appartments = apppartments
+	u.cfg.Appartments = appartments
 	// fmt.Println(u.cfg.Appartments)
 
 	http.Redirect(w, r, "/homes/", http.StatusSeeOther)
