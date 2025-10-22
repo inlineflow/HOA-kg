@@ -155,13 +155,42 @@ func HomeView(h models.Home) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div><form><fieldset class=\"fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Создание карточек</legend> <label for=\"from\" class=\"label\">С</label> <input type=\"number\" id=\"from\" class=\"input\"> <label for=\"to\" class=\"label\">По</label> <input type=\"number\" id=\"to\" class=\"input\">По <button class=\"btn btn-neutral mt-4\">Создать</button></fieldset></form></div>")
+			templ_7745c5c3_Err = Home(h).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = SidebarLayout(h.Address).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func Home(h models.Home) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div><form hx-post=\"/homes/appartment\" hx-push-url=\"true\"><fieldset class=\"fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Создание карточек</legend><div class=\"flex gap-4 items-center justify-center\"><div><label for=\"from\" class=\"label\">С</label> <input name=\"from\" type=\"number\" id=\"from\" class=\"input\"></div><span class=\"text-xl mt-2\">—</span><div><label for=\"to\" class=\"label\">По</label> <input name=\"to\" type=\"number\" id=\"to\" class=\"input\"></div></div><button class=\"btn btn-neutral mt-4\">Создать</button></fieldset></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

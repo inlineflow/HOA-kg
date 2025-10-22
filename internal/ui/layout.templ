@@ -19,16 +19,16 @@ templ BaseLayout(title string) {
   <script type="module" src="/assets/js/alpinejs@3.15.0.js" defer></script>
 </head>
 
-<body hx-boost="true">
+<body hx-boost="true" hx-target="main">
 
   <header class="p-4">
     @Navbar()
   </header>
-  <main class="mt-8">
-    <div class="flex items-center justify-center">
-      { children... }
-    </div>
-  </main>
+  <!-- <main class="mt-8"> -->
+  <!-- <div class="flex items-center justify-center"> -->
+  { children... }
+  <!-- </div> -->
+  <!-- </main> -->
 
   @themecontroller.Script()
 </body>
@@ -45,7 +45,9 @@ templ Banner() {
     "size": "48",
     })
   </p>
-  <p class="text-3xl">Управдом</p>
+  <a href="/homes" hx-boost="false">
+    <p class="text-3xl">Управдом</p>
+  </a>
 </div>
 }
 

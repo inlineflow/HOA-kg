@@ -2,38 +2,41 @@ package themecontroller
 
 templ Script() {
 	<script defer>
-  const darkTheme = JSON.parse(localStorage.getItem("theme"))
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  (() => {
 
-  if (darkTheme !== null) {
-    document.getElementById("theme-controller").checked = darkTheme;
+    const darkTheme = JSON.parse(localStorage.getItem("theme"))
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    console.log("darkTheme: ", darkTheme)
-    document.documentElement.setAttribute("data-theme", darkTheme ? "dark" : "light");
-    window.theme = darkTheme;
-    console.log("darkTheme is not null")
-    console.log("new theme: ", darkTheme ? "dark" : "light");
-  } else {
-    document.getElementById("theme-controller").checked = prefersDark;
-    document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
-    window.theme = prefersDark;
-    console.log("darkTheme is  null")
-  }
+    if (darkTheme !== null) {
+      document.getElementById("theme-controller").checked = darkTheme;
+
+      console.log("darkTheme: ", darkTheme)
+      document.documentElement.setAttribute("data-theme", darkTheme ? "dark" : "light");
+      window.theme = darkTheme;
+      console.log("darkTheme is not null")
+      console.log("new theme: ", darkTheme ? "dark" : "light");
+    } else {
+      document.getElementById("theme-controller").checked = prefersDark;
+      document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+      window.theme = prefersDark;
+      console.log("darkTheme is  null")
+    }
 
 
-  // document.getElementById("theme-controller").checked = window.theme;
-  // document.documentElement.setAttribute("data-theme", window.theme ? "dark" : "light");
-
-  localStorage.setItem("theme", window.theme);
-
-  document.getElementById("theme-controller").addEventListener("change", e => {
-    console.log(e.target.checked);
-    // e.target.checked = !e.target.checked;
-    document.documentElement.setAttribute("data-theme", e.target.checked ? "dark" : "light");
-    window.theme = e.target.checked;
+    // document.getElementById("theme-controller").checked = window.theme;
+    // document.documentElement.setAttribute("data-theme", window.theme ? "dark" : "light");
 
     localStorage.setItem("theme", window.theme);
-  });
+
+    document.getElementById("theme-controller").addEventListener("change", e => {
+      console.log(e.target.checked);
+      // e.target.checked = !e.target.checked;
+      document.documentElement.setAttribute("data-theme", e.target.checked ? "dark" : "light");
+      window.theme = e.target.checked;
+
+      localStorage.setItem("theme", window.theme);
+    });
+  })()
 </script>
 }
 
