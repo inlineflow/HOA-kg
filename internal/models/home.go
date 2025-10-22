@@ -1,11 +1,13 @@
 package models
 
-type Home struct {
-	ID      string
+import "github.com/google/uuid"
+
+type House struct {
+	ID      uuid.UUID
 	Address string
 }
 
 type Appartment struct {
-	ID         string
+	ID         uuid.UUID
 	FlatNumber int
 }

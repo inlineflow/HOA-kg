@@ -6,6 +6,8 @@ import (
 	"hypermedia/internal/ui"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 var dev = true
@@ -21,6 +23,10 @@ func disableCacheInDevMode(next http.Handler) http.Handler {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading environment variables")
+	}
 
 	cfg, err := models.NewConfig()
 	if err != nil {
