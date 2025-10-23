@@ -59,6 +59,7 @@ templ HouseView(h models.House, flats []models.Flat) {
 }
 
 templ House(h models.House, flats []models.Flat) {
+	<h2 class="text-2xl font-bold mb-24">「{ h.Address }」</h2>
 	<div class="flex flex-col gap-4">
 		<!-- @CreateFlatsForm(h) -->
 		@HouseManagementControls(h)
@@ -97,7 +98,7 @@ templ HouseManagementControls(h models.House) {
 
 templ CreateFlatsForm(h models.House) {
 	<form hx-post={ "/houses/" + h.ID.String() + "/flats" } hx-push-url="true">
-		<fieldset class="fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4">
+		<fieldset class="fieldset bg-base-200 border-base-100 rounded-box w-xs border p-4">
 			<legend class="fieldset-legend">Создание карточек</legend>
 			<div class="flex gap-4 items-center justify-center">
 				<div>
@@ -110,7 +111,7 @@ templ CreateFlatsForm(h models.House) {
 					<input name="to" type="number" id="to" class="input"/>
 				</div>
 			</div>
-			<button class="btn btn-neutral mt-12">Создать</button>
+			<button class="btn btn-primary mt-12">Создать</button>
 		</fieldset>
 	</form>
 }
