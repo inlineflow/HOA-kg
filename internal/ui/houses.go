@@ -122,12 +122,14 @@ func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	args := make([]database.CreateFlatsParams, to)
-	for i := from - 1; i < to-1; i++ {
+	for i := from - 1; i < to; i++ {
 		args[i] = database.CreateFlatsParams{
 			HouseID:    houseID,
-			FlatNumber: int32(i),
+			FlatNumber: int32(i + 1),
 		}
 	}
+
+	// fmt.Println(args)
 
 	_, err = u.cfg.DB.CreateFlats(r.Context(), args)
 	if err != nil {
