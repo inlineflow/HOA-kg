@@ -7,7 +7,7 @@ type House struct {
 	Address string
 }
 
-type Appartment struct {
+type Flat struct {
 	ID         uuid.UUID
 	FlatNumber int
 }

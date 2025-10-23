@@ -29,7 +29,7 @@ func Sidebar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"drawer\"><input type=\"checkbox\" id=\"my-drawer-1\" class=\"drawer-toggle\"><div class=\"drawer-content\"><!-- <label for=\"my-drawer-1\" class=\"btn drawer-button\">Open drawer</label> --><main class=\"flex flex-col justify-center items-center p-24\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"drawer lg:drawer-open\"><input type=\"checkbox\" id=\"my-drawer-1\" class=\"drawer-toggle\"><div class=\"drawer-content\"><!-- <label for=\"my-drawer-1\" class=\"btn drawer-button\">Open drawer</label> --><main class=\"flex flex-col justify-center items-center p-24\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

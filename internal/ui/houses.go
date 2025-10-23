@@ -1,17 +1,13 @@
 package ui
 
 import (
-	"context"
 	"fmt"
-	"hypermedia/internal/models"
-
-	// "log"
-	"net/http"
-
 	"github.com/a-h/templ"
-	// "strconv"
-	//
-	// "github.com/google/uuid"
+	"github.com/google/uuid"
+	"hypermedia/internal/database"
+	"hypermedia/internal/models"
+	"net/http"
+	"strconv"
 )
 
 type UI struct {
@@ -23,30 +19,23 @@ func (u *UI) RedirectRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UI) Houses(w http.ResponseWriter, r *http.Request) {
-	dbHouses, err := u.cfg.DB.GetAllHouses(context.Background())
+	dbHouses, err := u.cfg.DB.GetAllHouses(r.Context())
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Error while fetching data from database: %v\n", err), 500)
 		return
 	}
 
 	houses := models.Map(dbHouses, models.ToHouseVM)
-	// houses := make([]models.House, len(dbHouses))
-	// for i, v := range dbHouses {
-	// 	houses[i] = models.ToHouseVM(v)
-	// }
 
+	var opts []func(*templ.ComponentHandler)
 	if r.Header.Get("HX-Request") != "" {
-		c := HousesGrid(houses)
-		c.Render(context.Background(), w)
-		return
+		opts = append(opts, templ.WithFragments("partial"))
 	}
 
-	c := ServeHouses(houses)
-	c.Render(context.Background(), w)
-
+	templ.Handler(ServeHouses(houses), opts...).ServeHTTP(w, r)
 }
 
-func (u *UI) CreateHouse(w http.ResponseWriter, r *http.Request) {
+func (u *UI) CreateHouseForm(w http.ResponseWriter, r *http.Request) {
 	var opts []func(*templ.ComponentHandler)
 	if r.Header.Get("HX-Request") != "" {
 		opts = append(opts, templ.WithFragments("partial"))
@@ -55,8 +44,26 @@ func (u *UI) CreateHouse(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(CreateHouse(), opts...).ServeHTTP(w, r)
 }
 
+func (u *UI) HandleCreateHouse(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed to decode form values: %v\n", err), 500)
+		return
+	}
+
+	address := r.Form.Get("address")
+
+	_, err = u.cfg.DB.CreateHouse(r.Context(), database.Text(address))
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed to create a `House`. Err:%v\n", err), 500)
+		return
+	}
+
+	http.Redirect(w, r, "/houses", http.StatusSeeOther)
+}
+
 func (u *UI) HomePage(w http.ResponseWriter, r *http.Request) {
-	dbHouses, err := u.cfg.DB.GetAllHouses(context.Background())
+	dbHouses, err := u.cfg.DB.GetAllHouses(r.Context())
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Error while fetching data from database: %v\n", err), 500)
 		return
@@ -83,41 +90,50 @@ func (u *UI) HomePage(w http.ResponseWriter, r *http.Request) {
 
 	if r.Header.Get("HX-Request") != "" {
 		c := House(h)
-		c.Render(context.Background(), w)
+		c.Render(r.Context(), w)
 		return
 	}
 
 	c := HouseView(h)
-	c.Render(context.Background(), w)
+	c.Render(r.Context(), w)
 }
 
-// func (u *UI) CreateAppartments(w http.ResponseWriter, r *http.Request) {
-// 	err := r.ParseForm()
-// 	if err != nil {
-// 		log.Println(err)
-// 		return
-// 	}
-// 	from, err := strconv.Atoi(r.Form.Get("from"))
-// 	if err != nil {
-// 		log.Println(err)
-// 		return
-// 	}
-// 	to, err := strconv.Atoi(r.Form.Get("to"))
-// 	if err != nil {
-// 		log.Println(err)
-// 		return
-// 	}
-//
-// 	appartments := []models.Appartment{}
-// 	for i := from; i <= to; i++ {
-// 		appartments = append(appartments, models.Appartment{
-// 			ID:         uuid.NewString(),
-// 			FlatNumber: i,
-// 		})
-// 	}
-//
-// 	u.cfg.Appartments = appartments
-// 	// fmt.Println(u.cfg.Appartments)
-//
-// 	http.Redirect(w, r, "/homes/", http.StatusSeeOther)
-// }
+func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
+	houseID, err := uuid.Parse(r.PathValue("house_id"))
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed parsing house_id from the URL: %v\n", err), 500)
+		return
+	}
+	fmt.Println("houseID: ", houseID)
+	err = r.ParseForm()
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed to parse form: %v\n", err), 500)
+		return
+	}
+	from, err := strconv.Atoi(r.Form.Get("from"))
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed parsing start of range: %v\n", err), 500)
+		return
+	}
+	to, err := strconv.Atoi(r.Form.Get("to"))
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed parsing end of range: %v\n", err), 500)
+		return
+	}
+
+	args := make([]database.CreateFlatsParams, to)
+	for i := from - 1; i < to-1; i++ {
+		args[i] = database.CreateFlatsParams{
+			HouseID:    houseID,
+			FlatNumber: int32(i),
+		}
+	}
+
+	_, err = u.cfg.DB.CreateFlats(r.Context(), args)
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed to create `[]Flat`: %v\n", err), 500)
+		return
+	}
+
+	http.Redirect(w, r, "/homes/", http.StatusSeeOther)
+}

@@ -5,55 +5,58 @@ import "hypermedia/internal/ui/components/theme-controller"
 import "hypermedia/internal/ui/components"
 
 templ BaseLayout(title string) {
-	<!DOCTYPE html>
-	<html lang="ru" data-theme="light">
-		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-			<title>{ title }</title>
-			<link rel="stylesheet" href="/assets/css/styles.css"/>
-			<script src="/assets/js/htmx.min.js"></script>
-			<script type="module" src="/assets/js/htmx-ext.js" defer></script>
-			<script type="module" src="/assets/js/alpinejs@3.15.0.js" defer></script>
-		</head>
-		<body hx-boost="true" hx-target="main">
-			<header class="p-4">
-				@Navbar()
-			</header>
-			<!-- <main class="mt-8"> -->
-			<!-- <div class="flex items-center justify-center"> -->
-			{ children... }
-			<!-- </div> -->
-			<!-- </main> -->
-			@themecontroller.Script()
-		</body>
-	</html>
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>{ title }</title>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script src="/assets/js/htmx.min.js"></script>
+  <script type="module" src="/assets/js/htmx-ext.js" defer></script>
+  <script type="module" src="/assets/js/alpinejs@3.15.0.js" defer></script>
+</head>
+
+<body hx-boost="true" hx-target="main">
+  <header class="p-4">
+    @Navbar()
+  </header>
+  <!-- <main class="mt-8"> -->
+  <!-- <div class="flex items-center justify-center"> -->
+  { children... }
+  <!-- </div> -->
+  <!-- </main> -->
+  @themecontroller.Script()
+</body>
+
+</html>
 }
 
 templ Banner() {
-	<!-- <div class="flex items-center justify-center gap-2"> -->
-	<div class="navbar-center flex items-center justify-center gap-2">
-		<!-- <div class="navbar"> -->
-		<p class="text-3xl font-bold">
-			@component.HouseIcon(templ.Attributes{
-				"size": "48",
-			})
-		</p>
-		<a href="/houses" hx-boost="false">
-			<p class="text-3xl">Управдом</p>
-		</a>
-	</div>
+<!-- <div class="flex items-center justify-center gap-2"> -->
+<div class="navbar-center flex items-center justify-center gap-2">
+  <!-- <div class="navbar"> -->
+  <p class="text-3xl font-bold">
+    @component.HouseIcon(templ.Attributes{
+    "size": "48",
+    })
+  </p>
+  <a href="/houses" hx-boost="false">
+    <p class="text-3xl">Управдом</p>
+  </a>
+</div>
 }
 
 templ Navbar() {
-	<!-- <div class="navbar bg-neutral text-primary-content"> -->
-	<div class="navbar">
-		<div class="navbar-start">
-			<label for="my-drawer-1" class="drawer-button cursor-pointer">@components.Menu("size-8")
-</label>
-		</div>
-		@Banner()
-		@themecontroller.ThemeController()
-	</div>
+<!-- <div class="navbar bg-neutral text-primary-content"> -->
+<div class="navbar">
+  <div class="navbar-start">
+    <label for="my-drawer-1" class="drawer-button cursor-pointer lg:hidden">@components.Menu("size-8")
+    </label>
+  </div>
+  @Banner()
+  @themecontroller.ThemeController()
+</div>
 }

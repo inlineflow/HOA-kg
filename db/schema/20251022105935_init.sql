@@ -10,7 +10,7 @@ CREATE table house(
 
 CREATE table flat(
   flat_id UUID default uuid_generate_v4() PRIMARY KEY,
-  address TEXT,
+  flat_number int NOT NULL,
   house_id UUID,
 
   CONSTRAINT fk_flat_house
