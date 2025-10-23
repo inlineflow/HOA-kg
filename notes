@@ -1,0 +1,14 @@
+
+payment(
+  payment_id UUID default uuid_v4_generate() PRIMARY KEY,
+  account_id UUID,
+  amount numeric(14,4),
+  debit_credit boolean,
+);
+
+account(
+  account_id UUID default uuid_v4_generate() PRIMARY KEY,
+  flat_id UUID UNIQUE,
+  balance numeric(14,4),
+  
+);
