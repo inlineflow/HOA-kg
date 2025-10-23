@@ -11,6 +11,14 @@ func ToHouseVM(dbHouse database.House) House {
 	}
 }
 
+func ToFlatVM(dbFlat database.Flat) Flat {
+	return Flat{
+		ID:         dbFlat.FlatID,
+		HouseID:    dbFlat.HouseID,
+		FlatNumber: int(dbFlat.FlatNumber),
+	}
+}
+
 func Map[T any, V any](source []T, converter func(T) V) []V {
 	if source == nil {
 		return []V{}

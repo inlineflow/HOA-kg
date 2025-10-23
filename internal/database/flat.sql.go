@@ -6,10 +6,37 @@
 package database
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 )
 
 type CreateFlatsParams struct {
 	FlatNumber int32
 	HouseID    uuid.UUID
+}
+
+const getFlatsForHouse = `-- name: GetFlatsForHouse :many
+select flat_id, flat_number, house_id from flat
+where house_id = $1
+`
+
+func (q *Queries) GetFlatsForHouse(ctx context.Context, houseID uuid.UUID) ([]Flat, error) {
+	rows, err := q.db.Query(ctx, getFlatsForHouse, houseID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Flat
+	for rows.Next() {
+		var i Flat
+		if err := rows.Scan(&i.FlatID, &i.FlatNumber, &i.HouseID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

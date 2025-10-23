@@ -1,13 +1,15 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
-	"github.com/a-h/templ"
-	"github.com/google/uuid"
 	"hypermedia/internal/database"
 	"hypermedia/internal/models"
 	"net/http"
 	"strconv"
+
+	"github.com/a-h/templ"
+	"github.com/google/uuid"
 )
 
 type UI struct {
@@ -62,7 +64,7 @@ func (u *UI) HandleCreateHouse(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/houses", http.StatusSeeOther)
 }
 
-func (u *UI) HomePage(w http.ResponseWriter, r *http.Request) {
+func (u *UI) HouseView(w http.ResponseWriter, r *http.Request) {
 	dbHouses, err := u.cfg.DB.GetAllHouses(r.Context())
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Error while fetching data from database: %v\n", err), 500)
@@ -74,28 +76,46 @@ func (u *UI) HomePage(w http.ResponseWriter, r *http.Request) {
 		houses[i] = models.ToHouseVM(v)
 	}
 
-	ID := r.PathValue("home_id")
+	houseID, err := uuid.Parse(r.PathValue("home_id"))
+	if err != nil {
+		HandleError(w, r, &models.PathValueParseError{ResourceKey: "house_id", ParseError: err}, 500)
+		return
+	}
 	var h models.House
 	for _, v := range houses {
-		if v.ID.String() == ID {
+		if v.ID == houseID {
 			h = v
 		}
 	}
 
 	if (h == models.House{}) {
-		w.Write([]byte("Home not found"))
-		w.WriteHeader(500)
+		HandleError(w, r, errors.New("House not found"), 500)
 		return
 	}
 
+	dbFlats, err := u.cfg.DB.GetFlatsForHouse(r.Context(), houseID)
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed to get `[]Flat` for [house_id:%v]: %v", houseID, err), 500)
+		return
+	}
+
+	flats := models.Map(dbFlats, models.ToFlatVM)
+
+	var opts []func(*templ.ComponentHandler)
 	if r.Header.Get("HX-Request") != "" {
-		c := House(h)
-		c.Render(r.Context(), w)
-		return
+		opts = append(opts, templ.WithFragments("partial"))
 	}
 
-	c := HouseView(h)
-	c.Render(r.Context(), w)
+	templ.Handler(HouseView(h, flats), opts...).ServeHTTP(w, r)
+
+	// if r.Header.Get("HX-Request") != "" {
+	// 	c := House(h)
+	// 	c.Render(r.Context(), w)
+	// 	return
+	// }
+	//
+	// c := HouseView(h)
+	// c.Render(r.Context(), w)
 }
 
 func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {

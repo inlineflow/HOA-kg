@@ -9,5 +9,6 @@ type House struct {
 
 type Flat struct {
 	ID         uuid.UUID
+	HouseID    uuid.UUID
 	FlatNumber int
 }

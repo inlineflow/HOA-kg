@@ -50,30 +50,86 @@ templ HousesGrid(houses []models.House) {
 	</div>
 }
 
-templ HouseView(h models.House) {
+templ HouseView(h models.House, flats []models.Flat) {
 	@SidebarLayout(h.Address) {
-		@House(h)
+		@templ.Fragment("partial") {
+			@House(h, flats)
+		}
 	}
 }
 
-templ House(h models.House) {
-	<div>
-		<form hx-post={ "/houses/" + h.ID.String() + "/flats" } hx-push-url="true">
-			<fieldset class="fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4">
-				<legend class="fieldset-legend">Создание карточек</legend>
-				<div class="flex gap-4 items-center justify-center">
-					<div>
-						<label for="from" class="label">С</label>
-						<input name="from" type="number" id="from" class="input"/>
-					</div>
-					<span class="text-xl mt-2">—</span>
-					<div>
-						<label for="to" class="label">По</label>
-						<input name="to" type="number" id="to" class="input"/>
-					</div>
-				</div>
-				<button class="btn btn-neutral mt-4">Создать</button>
-			</fieldset>
-		</form>
+templ House(h models.House, flats []models.Flat) {
+	<div class="flex flex-col gap-4">
+		<!-- @CreateFlatsForm(h) -->
+		@HouseManagementControls(h)
+		@FlatsTable(flats)
 	</div>
+}
+
+templ HouseManagementControls(h models.House) {
+	<div x-data>
+		<button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание карточек</button>
+		<dialog x-ref="modal" class="modal" id="controls-modal">
+			<div class="modal-box flex flex-col gap-8 py-8 justify-center items-center">
+				<button @click="$refs.modal.close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+				@CreateFlatsForm(h)
+				<button @click="$refs.modal.close()" class="btn btn-neutral self-start btn-outline">Закрыть</button>
+			</div>
+		</dialog>
+	</div>
+	<!-- <div x-data="{open: false}"> -->
+	<!-- 	<button class="btn btn-neutral btn-outline" @click="open = true">Создание карточек</button> -->
+	<!-- 	<dialog -->
+	<!-- 		:open="open" -->
+	<!-- 		@close="open = false" -->
+	<!-- 		x-show="open" -->
+	<!-- 		@keydown.escape.window="open = false" -->
+	<!-- 		class="modal" -->
+	<!-- 		id="controls-modal" -->
+	<!-- 	> -->
+	<!-- 		<div class="modal-box flex py-16 justify-center items-center"> -->
+	<!-- 			<button @click="open = false" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button> -->
+	<!-- 			@CreateFlatsForm(h) -->
+	<!-- 		</div> -->
+	<!-- 	</dialog> -->
+	<!-- </div> -->
+}
+
+templ CreateFlatsForm(h models.House) {
+	<form hx-post={ "/houses/" + h.ID.String() + "/flats" } hx-push-url="true">
+		<fieldset class="fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4">
+			<legend class="fieldset-legend">Создание карточек</legend>
+			<div class="flex gap-4 items-center justify-center">
+				<div>
+					<label for="from" class="label">С</label>
+					<input name="from" type="number" id="from" class="input"/>
+				</div>
+				<span class="text-xl mt-2">—</span>
+				<div>
+					<label for="to" class="label">По</label>
+					<input name="to" type="number" id="to" class="input"/>
+				</div>
+			</div>
+			<button class="btn btn-neutral mt-12">Создать</button>
+		</fieldset>
+	</form>
+}
+
+templ FlatsTable(flats []models.Flat) {
+	<table class="table rounded-box border border-base-content/5 bg-base-100">
+		<thead>
+			<tr>
+				<th>
+					Номер квартиры
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, f := range flats {
+				<tr>
+					<td>{ f.FlatNumber }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
