@@ -18,6 +18,25 @@ CREATE table flat(
     REFERENCES house(house_id)
 );
 
+CREATE table account(
+  account_id UUID default uuid_generate_v4() PRIMARY KEY,
+  balance NUMERIC(12,2),
+  name TEXT
+  -- flat_id UUID UNIQUE,
+
+
+);
+
+CREATE table payment(
+  payment_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  account_id UUID,
+  note TEXT,
+
+    CONSTRAINT fk_payment_account_id
+      FOREIGN KEY (account_id)
+      REFERENCES account(account_id)
+);
+
 -- +goose StatementEnd
 
 -- +goose Down

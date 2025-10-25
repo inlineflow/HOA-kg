@@ -4,4 +4,4 @@ cd "$SCRIPT_DIR/../.."
 source .env
 
 cd "$SCRIPT_DIR/../../db/schema"
-goose postgres $migration_url up
+goose postgres $MIGRATION_URL up
