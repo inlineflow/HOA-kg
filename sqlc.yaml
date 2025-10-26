@@ -14,3 +14,8 @@ sql:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
             nullable: yes
+          - db_type: "pg_catalog.numeric"
+            go_type: "github.com/govalues/decimal.Decimal"
+          - db_type: "pg_catalog.numeric"
+            go_type: "github.com/govalues/decimal.Decimal"
+            nullable: yes
