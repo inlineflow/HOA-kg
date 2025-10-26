@@ -5,31 +5,73 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE table house(
   house_id UUID default uuid_generate_v4() PRIMARY KEY,
-  address TEXT
+  address TEXT NOT NULL
 );
 
 CREATE table flat(
   flat_id UUID default uuid_generate_v4() PRIMARY KEY,
   flat_number int NOT NULL,
-  house_id UUID,
+  house_id UUID NOT NULL,
+  area INT NOT NULL,
 
   CONSTRAINT fk_flat_house
     FOREIGN KEY (house_id)
     REFERENCES house(house_id)
 );
 
+CREATE table resident(
+  resident_id UUID default uuid_generate_v4() PRIMARY KEY,
+  flat_id UUID NOT NULL,
+  phone_number VARCHAR(15) NOT NULL,
+  fio TEXT NOT NULL,
+
+  CONSTRAINT resident_phone_number_digits_only
+    CHECK (phone_number ~ '^\d{1,15}$'),
+
+  CONSTRAINT redisent_flat
+    FOREIGN KEY (flat_id)
+    REFERENCES flat(flat_id)
+);
+
+CREATE table flat_owner(
+  flat_owner_id UUID default uuid_generate_v4() PRIMARY KEY,
+  flat_id UUID,
+  resident_id UUID NOT NULL, 
+
+  CONSTRAINT flat_owner_flat
+    FOREIGN KEY (flat_id)
+    REFERENCES flat(flat_id),
+
+  CONSTRAINT flat_owner_resident
+    FOREIGN KEY (resident_id)
+    REFERENCES resident(resident_id)
+);
+
+create table table_mapping(
+  table_mapping_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  table_id UUID NOT NULL,
+  table_name TEXT NOT NULL
+);
+
 CREATE table account(
   account_id UUID default uuid_generate_v4() PRIMARY KEY,
-  balance NUMERIC(12,2),
-  name TEXT
-  -- flat_id UUID UNIQUE,
+  balance NUMERIC(12,2) DEFAULT 0,
+  code INT NOT NULL,
+  name TEXT NOT NULL,
+  table_id UUID,
+  table_mapping_key UUID,
 
+  CONSTRAINT account_table_valid_mapping
+    CHECK (
+      (table_id is NULL AND table_mapping_key IS NULL) OR
+      (table_id IS NOT NULL AND table_mapping_key IS NOT NULL)
+    )
 
 );
 
 CREATE table payment(
   payment_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  account_id UUID,
+  account_id UUID NOT NULL,
   note TEXT,
 
     CONSTRAINT fk_payment_account_id
@@ -41,6 +83,11 @@ CREATE table payment(
 
 -- +goose Down
 -- +goose StatementBegin
+drop table flat_owner;
+drop table resident;
 drop table flat;
 drop table house;
+drop table payment;
+drop table account;
+drop table table_mapping;
 -- +goose StatementEnd
