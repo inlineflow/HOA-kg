@@ -1,6 +1,5 @@
 -- +goose Up
 -- +goose StatementBegin
--- SELECT 'up SQL query';
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE table house(
@@ -47,26 +46,26 @@ CREATE table flat_owner(
     REFERENCES resident(resident_id)
 );
 
-create table table_mapping(
-  table_mapping_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  table_id UUID NOT NULL,
-  table_name TEXT NOT NULL
-);
-
 CREATE table account(
   account_id UUID default uuid_generate_v4() PRIMARY KEY,
   balance NUMERIC(12,2) DEFAULT 0,
   code INT NOT NULL,
-  name TEXT NOT NULL,
-  table_id UUID,
-  table_mapping_key UUID,
+  name TEXT NOT NULL
 
-  CONSTRAINT account_table_valid_mapping
-    CHECK (
-      (table_id is NULL AND table_mapping_key IS NULL) OR
-      (table_id IS NOT NULL AND table_mapping_key IS NOT NULL)
-    )
+);
 
+create table flat_account(
+  flat_account_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  flat_id UUID UNIQUE,
+  account_id UUID UNIQUE,
+
+  CONSTRAINT flat_account_flat
+    FOREIGN KEY (flat_id)
+    REFERENCES flat(flat_id),
+
+  CONSTRAINT flat_account_account
+    FOREIGN KEY (account_id)
+    REFERENCES account(account_id)
 );
 
 CREATE table payment(
@@ -85,6 +84,7 @@ CREATE table payment(
 -- +goose StatementBegin
 drop table flat_owner;
 drop table resident;
+drop table flat_account;
 drop table flat;
 drop table house;
 drop table payment;
