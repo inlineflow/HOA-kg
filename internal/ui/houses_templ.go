@@ -63,11 +63,15 @@ func ServeHouses(houses []models.House) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- <div class=\"flex items-center justify-center max-w-64\"> -->")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 				templ_7745c5c3_Err = HousesGrid(houses).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- </div> --></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -79,7 +83,7 @@ func ServeHouses(houses []models.House) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = SidebarLayout("ТСЖ").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = NoSidebarLayout("ТСЖ").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +136,7 @@ func CreateHouse() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div><form hx-post=\"/houses/create\" hx-push-url=\"true\"><fieldset class=\"fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Дом</legend> <label for=\"address\" class=\"label\">Адрес</label> <input name=\"address\" type=\"text\" id=\"address\" class=\"input\"> <button class=\"btn btn-neutral mt-4\">Создать</button></fieldset></form></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div><form hx-post=\"/houses/create\" hx-push-url=\"true\"><fieldset class=\"fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Дом</legend> <label for=\"address\" class=\"label\">Адрес</label> <input name=\"address\" type=\"text\" id=\"address\" class=\"input\"> <button class=\"btn btn-neutral mt-4\">Создать</button></fieldset></form></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -144,7 +148,7 @@ func CreateHouse() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = SidebarLayout("Создание дома").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = NoSidebarLayout("Создание дома").Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,7 +177,7 @@ func HousesIndexControls() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"flex justify-center\"><a href=\"/houses/create\" class=\"btn btn-primary\">Добавить дом</a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex justify-center\"><a href=\"/houses/create\" class=\"btn btn-primary\">Добавить дом</a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -202,43 +206,43 @@ func HousesGrid(houses []models.House) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"grid grid-cols-4 gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"grid grid-cols-4 gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, h := range houses {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"card card-lg shadow-md\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"card card-lg shadow-md\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 templ.SafeURL
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs("/houses/" + h.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 43, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 45, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><div class=\"card-body text-lg\"><p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-boost=\"false\"><div class=\"card-body text-lg\"><p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(h.Address)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 45, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 47, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p></div></a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</p></div></a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -303,7 +307,7 @@ func HouseView(h models.House, flats []models.Flat) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = SidebarLayout(h.Address).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = SidebarLayout(h.Address, h.ID).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -332,20 +336,20 @@ func House(h models.House, flats []models.Flat) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<h2 class=\"text-2xl font-bold mb-24\">「")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<h2 class=\"text-2xl font-bold mb-24\">「")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(h.Address)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 62, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 64, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "」</h2><div class=\"flex flex-col gap-4\"><!-- @CreateFlatsForm(h) -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "」</h2><div class=\"flex flex-col gap-4\"><!-- @CreateFlatsForm(h) -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -357,7 +361,7 @@ func House(h models.House, flats []models.Flat) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -386,7 +390,7 @@ func HouseManagementControls(h models.House) templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div x-data><button class=\"btn btn-neutral btn-outline\" @click=\"$refs.modal.showModal()\">Создание карточек</button> <dialog x-ref=\"modal\" class=\"modal\" id=\"controls-modal\"><div class=\"modal-box flex flex-col gap-8 py-8 justify-center items-center\"><button @click=\"$refs.modal.close()\" class=\"btn btn-sm btn-circle btn-ghost absolute right-2 top-2\">✕</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div x-data><button class=\"btn btn-neutral btn-outline\" @click=\"$refs.modal.showModal()\">Создание карточек</button> <dialog x-ref=\"modal\" class=\"modal\" id=\"controls-modal\"><div class=\"modal-box flex flex-col gap-8 py-8 justify-center items-center\"><button @click=\"$refs.modal.close()\" class=\"btn btn-sm btn-circle btn-ghost absolute right-2 top-2\">✕</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -394,7 +398,7 @@ func HouseManagementControls(h models.House) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<button @click=\"$refs.modal.close()\" class=\"btn btn-neutral self-start btn-outline\">Закрыть</button></div></dialog></div><!-- <div x-data=\"{open: false}\"> --><!-- \t<button class=\"btn btn-neutral btn-outline\" @click=\"open = true\">Создание карточек</button> --><!-- \t<dialog --><!-- \t\t:open=\"open\" --><!-- \t\t@close=\"open = false\" --><!-- \t\tx-show=\"open\" --><!-- \t\t@keydown.escape.window=\"open = false\" --><!-- \t\tclass=\"modal\" --><!-- \t\tid=\"controls-modal\" --><!-- \t> --><!-- \t\t<div class=\"modal-box flex py-16 justify-center items-center\"> --><!-- \t\t\t<button @click=\"open = false\" class=\"btn btn-sm btn-circle btn-ghost absolute right-2 top-2\">✕</button> --><!-- \t\t\t@CreateFlatsForm(h) --><!-- \t\t</div> --><!-- \t</dialog> --><!-- </div> -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button @click=\"$refs.modal.close()\" class=\"btn btn-neutral self-start btn-outline\">Закрыть</button></div></dialog></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -423,20 +427,20 @@ func CreateFlatsForm(h models.House) templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<form hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<form hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs("/houses/" + h.ID.String() + "/flats")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 100, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 86, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-push-url=\"true\"><fieldset class=\"fieldset bg-base-200 border-base-100 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Создание карточек</legend><div class=\"flex gap-4 items-center justify-center\"><div><label for=\"from\" class=\"label\">С</label> <input name=\"from\" type=\"number\" id=\"from\" class=\"input\"></div><span class=\"text-xl mt-2\">—</span><div><label for=\"to\" class=\"label\">По</label> <input name=\"to\" type=\"number\" id=\"to\" class=\"input\"></div></div><button class=\"btn btn-primary mt-12\">Создать</button></fieldset></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" hx-push-url=\"true\"><fieldset class=\"fieldset bg-base-200 border-base-100 rounded-box w-xs border p-4\"><legend class=\"fieldset-legend\">Создание карточек</legend><div class=\"flex gap-4 items-center justify-center\"><div><label for=\"from\" class=\"label\">С</label> <input name=\"from\" type=\"number\" id=\"from\" class=\"input\"></div><span class=\"text-xl mt-2\">—</span><div><label for=\"to\" class=\"label\">По</label> <input name=\"to\" type=\"number\" id=\"to\" class=\"input\"></div></div><button class=\"btn btn-primary mt-12\">Создать</button></fieldset></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -465,30 +469,30 @@ func FlatsTable(flats []models.Flat) templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<table class=\"table rounded-box border border-base-content/5 bg-base-100\"><thead><tr><th>Номер квартиры</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<table class=\"table rounded-box border border-base-content/5 bg-base-100\"><thead><tr><th>Номер квартиры</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, f := range flats {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<tr><td>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<tr><td>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(f.FlatNumber)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 131, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/houses.templ`, Line: 117, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</tbody></table>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</tbody></table>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

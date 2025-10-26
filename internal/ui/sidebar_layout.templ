@@ -2,9 +2,11 @@ package ui
 
 import "hypermedia/internal/ui/components/sidebar"
 
-templ SidebarLayout(title string) {
+import "github.com/google/uuid"
+
+templ SidebarLayout(title string, houseID uuid.UUID) {
 	@BaseLayout(title) {
-		@sidebar.Sidebar() {
+		@sidebar.Sidebar(houseID) {
 			{ children... }
 		}
 	}

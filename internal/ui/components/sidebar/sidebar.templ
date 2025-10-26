@@ -2,7 +2,10 @@ package sidebar
 
 import "hypermedia/internal/component"
 
-templ Sidebar() {
+import "fmt"
+import "github.com/google/uuid"
+
+templ Sidebar(houseID uuid.UUID) {
 	<div class="drawer lg:drawer-open">
 		<input type="checkbox" id="my-drawer-1" class="drawer-toggle"/>
 		<div class="drawer-content">
@@ -14,7 +17,7 @@ templ Sidebar() {
 		<div class="drawer-side">
 			<label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></label>
 			<ul class="menu bg-base-200 min-h-full w-80 p-4">
-				@SidebarDropdown()
+				@SidebarDropdown(houseID)
 				<!-- <li><a href="/houses">Дома</a></li> -->
 				<!-- <li><a href="/payment-plans">Планы сборов</a></li> -->
 			</ul>
@@ -22,8 +25,9 @@ templ Sidebar() {
 	</div>
 }
 
-templ SidebarDropdown() {
+templ SidebarDropdown(houseID uuid.UUID) {
 	<div tabindex="0" class="collapse bg-base-100 border-base-300 border">
+		<input type="checkbox"/>
 		<div class="collapse-title font-semibold flex items-center gap-2">
 			<!-- @Home() -->
 			@component.HouseIcon(templ.Attributes{
@@ -32,7 +36,7 @@ templ SidebarDropdown() {
 			<span>Дома</span>
 		</div>
 		<div class="collapse-content text-sm">
-			<li><a href="/payment-plans">Планы сборов</a></li>
+			<li><a href={ fmt.Sprintf("/houses/%s/payment-plans", houseID) }>Планы сборов</a></li>
 		</div>
 	</div>
 }

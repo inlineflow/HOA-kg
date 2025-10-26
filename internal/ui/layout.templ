@@ -14,8 +14,8 @@ templ BaseLayout(title string) {
 			<title>{ title }</title>
 			<link rel="stylesheet" href="/assets/css/styles.css"/>
 			<script src="/assets/js/htmx.min.js"></script>
-			<script type="module" src="/assets/js/htmx-ext.js" defer></script>
-			<script type="module" src="/assets/js/alpinejs@3.15.0.js" defer></script>
+			<script type="module" src="/assets/js/htmx-ext.js"></script>
+			<script type="module" src="/assets/js/alpinejs@3.15.0.js"></script>
 		</head>
 		<body hx-boost="true" hx-target="main">
 			<header class="p-4">
@@ -29,6 +29,14 @@ templ BaseLayout(title string) {
 			@themecontroller.Script()
 		</body>
 	</html>
+}
+
+templ NoSidebarLayout(title string) {
+	@BaseLayout(title) {
+		<main>
+			{ children... }
+		</main>
+	}
 }
 
 templ Banner() {

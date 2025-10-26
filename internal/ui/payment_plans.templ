@@ -1,5 +1,77 @@
 package ui
 
-templ PaymentPlans() {
-	<div></div>
+import "hypermedia/internal/models"
+import "fmt"
+import "github.com/google/uuid"
+
+templ PaymentPlans(plans []models.PaymentPlan, houseID uuid.UUID) {
+	@SidebarLayout("Планы сборов", houseID) {
+		@templ.Fragment("partial") {
+			<!-- <title>Планы сборов</title> -->
+			if len(plans) > 0 {
+				@PaymentPlanTable(plans)
+			}
+			@PaymentPlanTableSkeleton()
+		}
+	}
+}
+
+templ PaymentPlanControls(houseID uuid.UUID) {
+	<div x-data>
+		<button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание планов сборов</button>
+		<dialog x-ref="modal" class="modal" id="controls-modal">
+			<div class="modal-box flex flex-col gap-8 py-8 justify-center items-center">
+				<button @click="$refs.modal.close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+				<!-- @CreateFlatsForm(h) -->
+				<button @click="$refs.modal.close()" class="btn btn-neutral self-start btn-outline">Закрыть</button>
+			</div>
+		</dialog>
+	</div>
+}
+
+templ CreatePaymentPlanForm(houseID uuid.UUID) {
+	<form hx-post={ "/houses/" + houseID.String() + "/payment-plans" } hx-push-url="true">
+		<fieldset class="fieldset bg-base-200 border-base-100 rounded-box w-xs border p-4">
+			<legend class="fieldset-legend">Создание планов сборов</legend>
+			<div class="flex gap-4 items-center justify-center">
+				<div>
+					<label for="from" class="label">С</label>
+					<input name="from" type="number" id="from" class="input"/>
+				</div>
+				<span class="text-xl mt-2">—</span>
+				<div>
+					<label for="to" class="label">По</label>
+					<input name="to" type="number" id="to" class="input"/>
+				</div>
+			</div>
+			<button class="btn btn-primary mt-12">Создать</button>
+		</fieldset>
+	</form>
+}
+
+templ PaymentPlanTable(plans []models.PaymentPlan) {
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Период взносов</th>
+				<th>С</th>
+				<th>По</th>
+				<th>Сумма</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, p := range plans {
+				<tr>{ p.PeriodID.String() }</tr>
+				<tr>{ p.DateFrom.Format("02.01.2006") }</tr>
+				<tr>{ p.DateTo.Format("02.01.2006") }</tr>
+				<tr>{ fmt.Sprintf("%.2f", p.MonthlyAmount) }</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ PaymentPlanTableSkeleton() {
+	<div class="flex min-w-64 min-h-64 items-center justify-center rounded-box bg-base-200 shadow-md">
+		<p class="text-lg">Создайте план</p>
+	</div>
 }

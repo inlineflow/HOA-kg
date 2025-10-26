@@ -3,18 +3,20 @@ package ui
 import "hypermedia/internal/models"
 
 templ ServeHouses(houses []models.House) {
-	@SidebarLayout("ТСЖ") {
+	@NoSidebarLayout("ТСЖ") {
 		@templ.Fragment("partial") {
 			<div class="flex flex-col gap-4">
 				@HousesIndexControls()
+				<!-- <div class="flex items-center justify-center max-w-64"> -->
 				@HousesGrid(houses)
+				<!-- </div> -->
 			</div>
 		}
 	}
 }
 
 templ CreateHouse() {
-	@SidebarLayout("Создание дома") {
+	@NoSidebarLayout("Создание дома") {
 		@templ.Fragment("partial") {
 			<div>
 				<form hx-post="/houses/create" hx-push-url="true">
@@ -40,7 +42,7 @@ templ HousesGrid(houses []models.House) {
 	<div class="grid grid-cols-4 gap-4">
 		for _, h := range houses {
 			<div class="card card-lg shadow-md">
-				<a href={ "/houses/" + h.ID.String() }>
+				<a href={ "/houses/" + h.ID.String() } hx-boost="false">
 					<div class="card-body text-lg">
 						<p>{ h.Address }</p>
 					</div>
@@ -51,7 +53,7 @@ templ HousesGrid(houses []models.House) {
 }
 
 templ HouseView(h models.House, flats []models.Flat) {
-	@SidebarLayout(h.Address) {
+	@SidebarLayout(h.Address, h.ID) {
 		@templ.Fragment("partial") {
 			@House(h, flats)
 		}
@@ -78,22 +80,6 @@ templ HouseManagementControls(h models.House) {
 			</div>
 		</dialog>
 	</div>
-	<!-- <div x-data="{open: false}"> -->
-	<!-- 	<button class="btn btn-neutral btn-outline" @click="open = true">Создание карточек</button> -->
-	<!-- 	<dialog -->
-	<!-- 		:open="open" -->
-	<!-- 		@close="open = false" -->
-	<!-- 		x-show="open" -->
-	<!-- 		@keydown.escape.window="open = false" -->
-	<!-- 		class="modal" -->
-	<!-- 		id="controls-modal" -->
-	<!-- 	> -->
-	<!-- 		<div class="modal-box flex py-16 justify-center items-center"> -->
-	<!-- 			<button @click="open = false" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button> -->
-	<!-- 			@CreateFlatsForm(h) -->
-	<!-- 		</div> -->
-	<!-- 	</dialog> -->
-	<!-- </div> -->
 }
 
 templ CreateFlatsForm(h models.House) {

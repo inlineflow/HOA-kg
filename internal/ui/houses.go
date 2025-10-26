@@ -55,7 +55,7 @@ func (u *UI) HandleCreateHouse(w http.ResponseWriter, r *http.Request) {
 
 	address := r.Form.Get("address")
 
-	_, err = u.cfg.DB.CreateHouse(r.Context(), database.Text(address))
+	_, err = u.cfg.DB.CreateHouse(r.Context(), address)
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Failed to create a `House`. Err:%v\n", err), 500)
 		return
@@ -76,7 +76,7 @@ func (u *UI) HouseView(w http.ResponseWriter, r *http.Request) {
 		houses[i] = models.ToHouseVM(v)
 	}
 
-	houseID, err := uuid.Parse(r.PathValue("home_id"))
+	houseID, err := uuid.Parse(r.PathValue("house_id"))
 	if err != nil {
 		HandleError(w, r, &models.PathValueParseError{ResourceKey: "house_id", ParseError: err}, 500)
 		return
