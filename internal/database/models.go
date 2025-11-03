@@ -58,8 +58,10 @@ type PaymentPlan struct {
 }
 
 type Period struct {
-	PeriodID uuid.UUID
-	Period   string
+	PeriodID    uuid.UUID
+	Tag         string
+	Description string
+	PeriodGroup string
 }
 
 type Resident struct {

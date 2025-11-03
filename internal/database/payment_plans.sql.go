@@ -14,12 +14,13 @@ import (
 )
 
 const createPaymentPlan = `-- name: CreatePaymentPlan :one
-INSERT INTO payment_plan(period_id, date_from, date_to, monthly_amount)
-VALUES($1, $2, $3, $4)
+INSERT INTO payment_plan(house_id, period_id, date_from, date_to, monthly_amount)
+VALUES($1, $2, $3, $4, $5)
 RETURNING payment_plan_id, house_id, period_id, date_from, date_to, monthly_amount
 `
 
 type CreatePaymentPlanParams struct {
+	HouseID       uuid.UUID
 	PeriodID      uuid.UUID
 	DateFrom      pgtype.Timestamp
 	DateTo        pgtype.Timestamp
@@ -28,6 +29,7 @@ type CreatePaymentPlanParams struct {
 
 func (q *Queries) CreatePaymentPlan(ctx context.Context, arg CreatePaymentPlanParams) (PaymentPlan, error) {
 	row := q.db.QueryRow(ctx, createPaymentPlan,
+		arg.HouseID,
 		arg.PeriodID,
 		arg.DateFrom,
 		arg.DateTo,
@@ -86,6 +88,35 @@ func (q *Queries) GetPaymentPlansByHouseID(ctx context.Context, houseID uuid.UUI
 			&i.DateFrom,
 			&i.DateTo,
 			&i.MonthlyAmount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPeriods = `-- name: GetPeriods :many
+select period_id, tag, description, period_group from period
+`
+
+func (q *Queries) GetPeriods(ctx context.Context) ([]Period, error) {
+	rows, err := q.db.Query(ctx, getPeriods)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Period
+	for rows.Next() {
+		var i Period
+		if err := rows.Scan(
+			&i.PeriodID,
+			&i.Tag,
+			&i.Description,
+			&i.PeriodGroup,
 		); err != nil {
 			return nil, err
 		}

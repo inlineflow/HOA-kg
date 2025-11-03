@@ -4,49 +4,72 @@ import "hypermedia/internal/models"
 import "fmt"
 import "github.com/google/uuid"
 
-templ PaymentPlans(plans []models.PaymentPlan, houseID uuid.UUID) {
-	@SidebarLayout("Планы сборов", houseID) {
+templ PaymentPlans(plans []models.PaymentPlan, props PaymentPlanFormProps) {
+	@SidebarLayout("Планы сборов", props.houseID) {
 		@templ.Fragment("partial") {
+			@PaymentPlanControls(props)
 			<!-- <title>Планы сборов</title> -->
 			if len(plans) > 0 {
 				@PaymentPlanTable(plans)
+			} else {
+				@PaymentPlanTableSkeleton()
 			}
-			@PaymentPlanTableSkeleton()
 		}
 	}
 }
 
-templ PaymentPlanControls(houseID uuid.UUID) {
+templ PaymentPlanControls(props PaymentPlanFormProps) {
 	<div x-data>
 		<button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание планов сборов</button>
 		<dialog x-ref="modal" class="modal" id="controls-modal">
 			<div class="modal-box flex flex-col gap-8 py-8 justify-center items-center">
 				<button @click="$refs.modal.close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 				<!-- @CreateFlatsForm(h) -->
+				@CreatePaymentPlanForm(props)
 				<button @click="$refs.modal.close()" class="btn btn-neutral self-start btn-outline">Закрыть</button>
 			</div>
 		</dialog>
 	</div>
 }
 
-templ CreatePaymentPlanForm(houseID uuid.UUID) {
-	<form hx-post={ "/houses/" + houseID.String() + "/payment-plans" } hx-push-url="true">
-		<fieldset class="fieldset bg-base-200 border-base-100 rounded-box w-xs border p-4">
-			<legend class="fieldset-legend">Создание планов сборов</legend>
-			<div class="flex gap-4 items-center justify-center">
-				<div>
-					<label for="from" class="label">С</label>
-					<input name="from" type="number" id="from" class="input"/>
+type PaymentPlanFormProps struct {
+	houseID uuid.UUID
+	periods []models.Period
+}
+
+templ CreatePaymentPlanForm(props PaymentPlanFormProps) {
+	<div class="flex flex-col gap-2">
+		<h2 class="text-center text-xl font-bold">Создание плана сборов</h2>
+		<form hx-post={ "/houses/" + props.houseID.String() + "/payment-plans" } hx-push-url="true">
+			<div class="flex flex-col gap-4">
+				<div x-data="{period: ''}" class="flex gap-4 items-center justify-center">
+					<select @change="period = $event.target.value" id="period-select" name="period" class="select">
+						<option disabled selected>Период</option>
+						<option value="monthly">Ежемесячно</option>
+						<option value="bi-weekly">Раз в две недели</option>
+					</select>
+					<select
+						id="period-value-select"
+						name="period_id"
+						x-show="period == 'monthly'"
+						class="select"
+						id="monthly-values"
+					>
+						<option selected disabled></option>
+						for _, p := range props.periods {
+							if p.Group == "monthly" {
+								<option value={ p.PeriodID.String() }>{ p.Description }</option>
+							}
+						}
+						<!-- <option value="fdom">Первый день месяца</option> -->
+						<!-- <option value="ldom">Последний день месяца</option> -->
+					</select>
 				</div>
-				<span class="text-xl mt-2">—</span>
-				<div>
-					<label for="to" class="label">По</label>
-					<input name="to" type="number" id="to" class="input"/>
-				</div>
+				<input id="payment-amount-input" name="amount" class="input" placeholder="Сумма"/>
 			</div>
-			<button class="btn btn-primary mt-12">Создать</button>
-		</fieldset>
-	</form>
+			<button class="btn btn-primary mt-12 ml-auto block">Создать</button>
+		</form>
+	</div>
 }
 
 templ PaymentPlanTable(plans []models.PaymentPlan) {
@@ -61,10 +84,16 @@ templ PaymentPlanTable(plans []models.PaymentPlan) {
 		</thead>
 		<tbody>
 			for _, p := range plans {
-				<tr>{ p.PeriodID.String() }</tr>
-				<tr>{ p.DateFrom.Format("02.01.2006") }</tr>
-				<tr>{ p.DateTo.Format("02.01.2006") }</tr>
-				<tr>{ fmt.Sprintf("%.2f", p.MonthlyAmount) }</tr>
+				<tr>
+					<td>{ p.PeriodID.String() }</td>
+					<td>{ p.DateFrom.Format("02.01.2006") }</td>
+					if p.DateTo != nil {
+						<td>{ p.DateTo.Format("02.01.2006") }</td>
+					} else {
+						<td></td>
+					}
+					<td>{ fmt.Sprintf("%.2f", p.MonthlyAmount) }</td>
+				</tr>
 			}
 		</tbody>
 	</table>
