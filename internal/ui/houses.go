@@ -55,7 +55,7 @@ func (u *UI) HandleCreateHouse(w http.ResponseWriter, r *http.Request) {
 
 	address := r.Form.Get("address")
 
-	_, err = u.cfg.DB.CreateHouse(r.Context(), address)
+	_, err = u.cfg.DB.InsertHouse(r.Context(), address)
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Failed to create a `House`. Err:%v\n", err), 500)
 		return
@@ -141,9 +141,9 @@ func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	args := make([]database.CreateFlatsParams, to)
+	args := make([]database.InsertFlatsParams, to)
 	for i := from - 1; i < to; i++ {
-		args[i] = database.CreateFlatsParams{
+		args[i] = database.InsertFlatsParams{
 			HouseID:    houseID,
 			FlatNumber: int32(i + 1),
 		}
@@ -151,7 +151,7 @@ func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Println(args)
 
-	_, err = u.cfg.DB.CreateFlats(r.Context(), args)
+	_, err = u.cfg.DB.InsertFlats(r.Context(), args)
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Failed to create `[]Flat`: %v\n", err), 500)
 		return

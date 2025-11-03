@@ -1,4 +1,4 @@
--- name: CreateFlats :copyfrom
+-- name: InsertFlats :copyfrom
 INSERT INTO flat(flat_number, house_id) VALUES($1, $2);
 
 -- name: GetFlatsForHouse :many

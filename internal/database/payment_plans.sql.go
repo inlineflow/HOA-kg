@@ -13,81 +13,80 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createPaymentPlan = `-- name: CreatePaymentPlan :one
-INSERT INTO payment_plan(house_id, period_id, date_from, date_to, monthly_amount)
-VALUES($1, $2, $3, $4, $5)
-RETURNING payment_plan_id, house_id, period_id, date_from, date_to, monthly_amount
-`
-
-type CreatePaymentPlanParams struct {
-	HouseID       uuid.UUID
-	PeriodID      uuid.UUID
-	DateFrom      pgtype.Timestamp
-	DateTo        pgtype.Timestamp
-	MonthlyAmount decimal.Decimal
-}
-
-func (q *Queries) CreatePaymentPlan(ctx context.Context, arg CreatePaymentPlanParams) (PaymentPlan, error) {
-	row := q.db.QueryRow(ctx, createPaymentPlan,
-		arg.HouseID,
-		arg.PeriodID,
-		arg.DateFrom,
-		arg.DateTo,
-		arg.MonthlyAmount,
-	)
-	var i PaymentPlan
-	err := row.Scan(
-		&i.PaymentPlanID,
-		&i.HouseID,
-		&i.PeriodID,
-		&i.DateFrom,
-		&i.DateTo,
-		&i.MonthlyAmount,
-	)
-	return i, err
-}
-
-const getLatestPaymentPlanByHouseID = `-- name: GetLatestPaymentPlanByHouseID :one
-SELECT payment_plan_id, house_id, period_id, date_from, date_to, monthly_amount FROM payment_plan
+const endLastPlan = `-- name: EndLastPlan :exec
+UPDATE payment_plan
+SET date_to = NOW()
 WHERE house_id = $1
 AND date_to IS NULL
 `
 
-func (q *Queries) GetLatestPaymentPlanByHouseID(ctx context.Context, houseID uuid.UUID) (PaymentPlan, error) {
+func (q *Queries) EndLastPlan(ctx context.Context, houseID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, endLastPlan, houseID)
+	return err
+}
+
+const getLatestPaymentPlanByHouseID = `-- name: GetLatestPaymentPlanByHouseID :one
+SELECT pp.payment_plan_id, pp.house_id, pp.period_id, pp.date_from, pp.date_to, pp.monthly_amount, p.period_id, p.tag, p.description, p.period_group FROM payment_plan pp
+join period p on pp.period_id = p.period_id
+WHERE house_id = $1
+AND date_to IS NULL
+`
+
+type GetLatestPaymentPlanByHouseIDRow struct {
+	PaymentPlan PaymentPlan
+	Period      Period
+}
+
+func (q *Queries) GetLatestPaymentPlanByHouseID(ctx context.Context, houseID uuid.UUID) (GetLatestPaymentPlanByHouseIDRow, error) {
 	row := q.db.QueryRow(ctx, getLatestPaymentPlanByHouseID, houseID)
-	var i PaymentPlan
+	var i GetLatestPaymentPlanByHouseIDRow
 	err := row.Scan(
-		&i.PaymentPlanID,
-		&i.HouseID,
-		&i.PeriodID,
-		&i.DateFrom,
-		&i.DateTo,
-		&i.MonthlyAmount,
+		&i.PaymentPlan.PaymentPlanID,
+		&i.PaymentPlan.HouseID,
+		&i.PaymentPlan.PeriodID,
+		&i.PaymentPlan.DateFrom,
+		&i.PaymentPlan.DateTo,
+		&i.PaymentPlan.MonthlyAmount,
+		&i.Period.PeriodID,
+		&i.Period.Tag,
+		&i.Period.Description,
+		&i.Period.PeriodGroup,
 	)
 	return i, err
 }
 
 const getPaymentPlansByHouseID = `-- name: GetPaymentPlansByHouseID :many
-SELECT payment_plan_id, house_id, period_id, date_from, date_to, monthly_amount FROM payment_plan
+SELECT pp.payment_plan_id, pp.house_id, pp.period_id, pp.date_from, pp.date_to, pp.monthly_amount, p.period_id, p.tag, p.description, p.period_group FROM payment_plan pp
+join period p on pp.period_id = p.period_id
 where house_id = $1
+order by pp.date_to DESC
 `
 
-func (q *Queries) GetPaymentPlansByHouseID(ctx context.Context, houseID uuid.UUID) ([]PaymentPlan, error) {
+type GetPaymentPlansByHouseIDRow struct {
+	PaymentPlan PaymentPlan
+	Period      Period
+}
+
+func (q *Queries) GetPaymentPlansByHouseID(ctx context.Context, houseID uuid.UUID) ([]GetPaymentPlansByHouseIDRow, error) {
 	rows, err := q.db.Query(ctx, getPaymentPlansByHouseID, houseID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []PaymentPlan
+	var items []GetPaymentPlansByHouseIDRow
 	for rows.Next() {
-		var i PaymentPlan
+		var i GetPaymentPlansByHouseIDRow
 		if err := rows.Scan(
-			&i.PaymentPlanID,
-			&i.HouseID,
-			&i.PeriodID,
-			&i.DateFrom,
-			&i.DateTo,
-			&i.MonthlyAmount,
+			&i.PaymentPlan.PaymentPlanID,
+			&i.PaymentPlan.HouseID,
+			&i.PaymentPlan.PeriodID,
+			&i.PaymentPlan.DateFrom,
+			&i.PaymentPlan.DateTo,
+			&i.PaymentPlan.MonthlyAmount,
+			&i.Period.PeriodID,
+			&i.Period.Tag,
+			&i.Period.Description,
+			&i.Period.PeriodGroup,
 		); err != nil {
 			return nil, err
 		}
@@ -126,4 +125,38 @@ func (q *Queries) GetPeriods(ctx context.Context) ([]Period, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertPaymentPlan = `-- name: InsertPaymentPlan :one
+INSERT INTO payment_plan(house_id, period_id, date_from, date_to, monthly_amount)
+VALUES($1, $2, $3, $4, $5)
+RETURNING payment_plan_id, house_id, period_id, date_from, date_to, monthly_amount
+`
+
+type InsertPaymentPlanParams struct {
+	HouseID       uuid.UUID
+	PeriodID      uuid.UUID
+	DateFrom      pgtype.Timestamp
+	DateTo        pgtype.Timestamp
+	MonthlyAmount decimal.Decimal
+}
+
+func (q *Queries) InsertPaymentPlan(ctx context.Context, arg InsertPaymentPlanParams) (PaymentPlan, error) {
+	row := q.db.QueryRow(ctx, insertPaymentPlan,
+		arg.HouseID,
+		arg.PeriodID,
+		arg.DateFrom,
+		arg.DateTo,
+		arg.MonthlyAmount,
+	)
+	var i PaymentPlan
+	err := row.Scan(
+		&i.PaymentPlanID,
+		&i.HouseID,
+		&i.PeriodID,
+		&i.DateFrom,
+		&i.DateTo,
+		&i.MonthlyAmount,
+	)
+	return i, err
 }

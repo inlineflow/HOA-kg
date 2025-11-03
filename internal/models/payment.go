@@ -27,19 +27,19 @@ func ToPeriodVM(dbPeriod database.Period) Period {
 type PaymentPlan struct {
 	PaymentPlanID uuid.UUID
 	HouseID       uuid.UUID
-	PeriodID      uuid.UUID
+	Period        Period
 	DateFrom      *time.Time
 	DateTo        *time.Time
 	MonthlyAmount decimal.Decimal
 }
 
-func ToPaymentPlanVM(dbPP database.PaymentPlan) PaymentPlan {
+func ToPaymentPlanVM(dbPP database.GetPaymentPlansByHouseIDRow) PaymentPlan {
 	return PaymentPlan{
-		PaymentPlanID: dbPP.PaymentPlanID,
-		HouseID:       dbPP.HouseID,
-		PeriodID:      dbPP.PeriodID,
-		DateFrom:      database.PgTimestampToTime(dbPP.DateFrom),
-		DateTo:        database.PgTimestampToTime(dbPP.DateTo),
-		MonthlyAmount: dbPP.MonthlyAmount,
+		PaymentPlanID: dbPP.PaymentPlan.PaymentPlanID,
+		HouseID:       dbPP.PaymentPlan.HouseID,
+		Period:        ToPeriodVM(dbPP.Period),
+		DateFrom:      database.PgTimestampToTime(dbPP.PaymentPlan.DateFrom),
+		DateTo:        database.PgTimestampToTime(dbPP.PaymentPlan.DateTo),
+		MonthlyAmount: dbPP.PaymentPlan.MonthlyAmount,
 	}
 }

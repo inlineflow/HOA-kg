@@ -9,19 +9,6 @@ import (
 	"context"
 )
 
-const createHouse = `-- name: CreateHouse :one
-INSERT INTO house(address)
-values($1)
-RETURNING house_id, address
-`
-
-func (q *Queries) CreateHouse(ctx context.Context, address string) (House, error) {
-	row := q.db.QueryRow(ctx, createHouse, address)
-	var i House
-	err := row.Scan(&i.HouseID, &i.Address)
-	return i, err
-}
-
 const getAllHouses = `-- name: GetAllHouses :many
 SELECT house_id, address from house
 `
@@ -44,4 +31,17 @@ func (q *Queries) GetAllHouses(ctx context.Context) ([]House, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertHouse = `-- name: InsertHouse :one
+INSERT INTO house(address)
+values($1)
+RETURNING house_id, address
+`
+
+func (q *Queries) InsertHouse(ctx context.Context, address string) (House, error) {
+	row := q.db.QueryRow(ctx, insertHouse, address)
+	var i House
+	err := row.Scan(&i.HouseID, &i.Address)
+	return i, err
 }

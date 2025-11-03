@@ -11,11 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type CreateFlatsParams struct {
-	FlatNumber int32
-	HouseID    uuid.UUID
-}
-
 const getFlatsForHouse = `-- name: GetFlatsForHouse :many
 select flat_id, flat_number, house_id, area from flat
 where house_id = $1
@@ -44,4 +39,9 @@ func (q *Queries) GetFlatsForHouse(ctx context.Context, houseID uuid.UUID) ([]Fl
 		return nil, err
 	}
 	return items, nil
+}
+
+type InsertFlatsParams struct {
+	FlatNumber int32
+	HouseID    uuid.UUID
 }

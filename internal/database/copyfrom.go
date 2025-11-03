@@ -9,13 +9,13 @@ import (
 	"context"
 )
 
-// iteratorForCreateFlats implements pgx.CopyFromSource.
-type iteratorForCreateFlats struct {
-	rows                 []CreateFlatsParams
+// iteratorForInsertFlats implements pgx.CopyFromSource.
+type iteratorForInsertFlats struct {
+	rows                 []InsertFlatsParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForCreateFlats) Next() bool {
+func (r *iteratorForInsertFlats) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -27,17 +27,17 @@ func (r *iteratorForCreateFlats) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForCreateFlats) Values() ([]interface{}, error) {
+func (r iteratorForInsertFlats) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].FlatNumber,
 		r.rows[0].HouseID,
 	}, nil
 }
 
-func (r iteratorForCreateFlats) Err() error {
+func (r iteratorForInsertFlats) Err() error {
 	return nil
 }
 
-func (q *Queries) CreateFlats(ctx context.Context, arg []CreateFlatsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"flat"}, []string{"flat_number", "house_id"}, &iteratorForCreateFlats{rows: arg})
+func (q *Queries) InsertFlats(ctx context.Context, arg []InsertFlatsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"flat"}, []string{"flat_number", "house_id"}, &iteratorForInsertFlats{rows: arg})
 }

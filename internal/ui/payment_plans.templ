@@ -3,28 +3,30 @@ package ui
 import "hypermedia/internal/models"
 import "fmt"
 import "github.com/google/uuid"
+import "time"
 
 templ PaymentPlans(plans []models.PaymentPlan, props PaymentPlanFormProps) {
 	@SidebarLayout("Планы сборов", props.houseID) {
 		@templ.Fragment("partial") {
-			@PaymentPlanControls(props)
-			<!-- <title>Планы сборов</title> -->
-			if len(plans) > 0 {
-				@PaymentPlanTable(plans)
-			} else {
-				@PaymentPlanTableSkeleton()
-			}
+			<div class="flex flex-col gap-4">
+				@PaymentPlanControls(props)
+				<!-- <title>Планы сборов</title> -->
+				if len(plans) > 0 {
+					@PaymentPlanTable(plans)
+				} else {
+					@PaymentPlanTableSkeleton()
+				}
+			</div>
 		}
 	}
 }
 
 templ PaymentPlanControls(props PaymentPlanFormProps) {
-	<div x-data>
+	<div x-data class="flex justify-center">
 		<button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание планов сборов</button>
 		<dialog x-ref="modal" class="modal" id="controls-modal">
 			<div class="modal-box flex flex-col gap-8 py-8 justify-center items-center">
 				<button @click="$refs.modal.close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-				<!-- @CreateFlatsForm(h) -->
 				@CreatePaymentPlanForm(props)
 				<button @click="$refs.modal.close()" class="btn btn-neutral self-start btn-outline">Закрыть</button>
 			</div>
@@ -72,8 +74,16 @@ templ CreatePaymentPlanForm(props PaymentPlanFormProps) {
 	</div>
 }
 
+func paymentPlanTableTrClass(t *time.Time) string {
+	if t == nil {
+		return "outline-2 rounded-field outline-primary/60"
+	}
+	return ""
+
+}
+
 templ PaymentPlanTable(plans []models.PaymentPlan) {
-	<table class="table">
+	<table class="table rounder-box shadow-md w-128">
 		<thead>
 			<tr>
 				<th>Период взносов</th>
@@ -84,13 +94,14 @@ templ PaymentPlanTable(plans []models.PaymentPlan) {
 		</thead>
 		<tbody>
 			for _, p := range plans {
-				<tr>
-					<td>{ p.PeriodID.String() }</td>
+				<tr class={ paymentPlanTableTrClass(p.DateTo) }>
+					<td>{ p.Period.Description }</td>
 					<td>{ p.DateFrom.Format("02.01.2006") }</td>
 					if p.DateTo != nil {
 						<td>{ p.DateTo.Format("02.01.2006") }</td>
 					} else {
 						<td></td>
+						<!-- <td><span class="badge badge-md badge-primary">Активный</span></td> -->
 					}
 					<td>{ fmt.Sprintf("%.2f", p.MonthlyAmount) }</td>
 				</tr>

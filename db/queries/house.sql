@@ -1,4 +1,4 @@
--- name: CreateHouse :one
+-- name: InsertHouse :one
 INSERT INTO house(address)
 values($1)
 RETURNING *;
