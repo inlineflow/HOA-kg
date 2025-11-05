@@ -1,9 +1,12 @@
 package sidebar
 
-import "hypermedia/internal/component"
+// import "hypermedia/internal/component"
 
-import "fmt"
-import "github.com/google/uuid"
+import (
+	"fmt"
+	"github.com/google/uuid"
+	"hypermedia/internal/ui/components/icons"
+)
 
 templ Sidebar(houseID uuid.UUID) {
 	<div class="drawer lg:drawer-open">
@@ -25,18 +28,48 @@ templ Sidebar(houseID uuid.UUID) {
 	</div>
 }
 
+type SidebarEntry struct {
+	Icon      func(attrs ...templ.Attributes) templ.Component
+	Label     string
+	LinkChunk string
+}
+
+func sidebarLink(houseID, chunk string) string { return fmt.Sprintf("/houses/%s/%s", houseID, chunk) }
+
+func entries() []SidebarEntry {
+	return []SidebarEntry{
+		{
+			Icon:      icons.DoorClosed,
+			Label:     "Квартиры",
+			LinkChunk: "flats",
+		},
+		{
+			Icon:      icons.NotebookText,
+			Label:     "Планы сборов",
+			LinkChunk: "payment-plans",
+		},
+	}
+}
+
 templ SidebarDropdown(houseID uuid.UUID) {
 	<div tabindex="0" class="collapse bg-base-100 border-base-300 border">
 		<input type="checkbox"/>
 		<div class="collapse-title font-semibold flex items-center gap-2">
 			<!-- @Home() -->
-			@component.HouseIcon(templ.Attributes{
+			@icons.HouseIcon(templ.Attributes{
 				"class": "size-4",
 			})
 			<span>Дома</span>
 		</div>
 		<div class="collapse-content text-sm">
-			<li><a href={ fmt.Sprintf("/houses/%s/payment-plans", houseID) }>Планы сборов</a></li>
+			for _, e := range entries() {
+				<li>
+					<a href={ sidebarLink(houseID.String(), e.LinkChunk) }>
+						@e.Icon()
+						<span>{ e.Label }</span>
+					</a>
+				</li>
+			}
 		</div>
 	</div>
 }

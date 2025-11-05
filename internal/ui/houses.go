@@ -118,7 +118,7 @@ func (u *UI) HouseView(w http.ResponseWriter, r *http.Request) {
 	// c.Render(r.Context(), w)
 }
 
-func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
+func (u *UI) HandleCreateFlats(w http.ResponseWriter, r *http.Request) {
 	houseID, err := uuid.Parse(r.PathValue("house_id"))
 	if err != nil {
 		HandleError(w, r, fmt.Errorf("Failed parsing house_id from the URL: %v\n", err), 500)
@@ -158,4 +158,19 @@ func (u *UI) CreateFlats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/homes/", http.StatusSeeOther)
+}
+
+func (u *UI) FlatsCreate(w http.ResponseWriter, r *http.Request) {
+	houseID, err := uuid.Parse(r.PathValue("house_id"))
+	if err != nil {
+		HandleError(w, r, fmt.Errorf("Failed parsing house_id from the URL: %v\n", err), 500)
+		return
+	}
+
+	var opts []func(*templ.ComponentHandler)
+	if r.Header.Get("HX-Request") != "" {
+		opts = append(opts, templ.WithFragments("partial"))
+	}
+
+	templ.Handler(CreateFlats(houseID), opts...).ServeHTTP(w, r)
 }

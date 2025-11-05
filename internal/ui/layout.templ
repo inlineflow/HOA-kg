@@ -1,9 +1,9 @@
 package ui
 
-import "hypermedia/internal/component"
 import "hypermedia/internal/ui/components/theme-controller"
-import "hypermedia/internal/ui/components"
+import "hypermedia/internal/ui/components/icons"
 
+// import "hypermedia/internal/ui/components"
 templ BaseLayout(title string) {
 	<!DOCTYPE html>
 	<html lang="ru" data-theme="light">
@@ -44,7 +44,7 @@ templ Banner() {
 	<div class="navbar-center flex items-center justify-center gap-2">
 		<!-- <div class="navbar"> -->
 		<p class="text-3xl font-bold">
-			@component.HouseIcon(templ.Attributes{
+			@icons.HouseIcon(templ.Attributes{
 				"class": "size-16",
 			})
 		</p>
@@ -59,7 +59,7 @@ templ Navbar() {
 	<div class="navbar">
 		<div class="navbar-start">
 			<label for="my-drawer-1" class="drawer-button cursor-pointer lg:hidden">
-				@components.Menu("size-8")
+				@icons.Menu("size-8")
 			</label>
 		</div>
 		@Banner()

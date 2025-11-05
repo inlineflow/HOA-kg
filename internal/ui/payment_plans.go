@@ -71,7 +71,7 @@ func (u *UI) CreatePaymentPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pp, err := u.cfg.DB.CreatePaymentPlan(r.Context(), database.InsertPaymentPlanParams{
+	pp, err := u.cfg.DB.CreatePaymentPlan(r.Context(), u.cfg.Pool, database.InsertPaymentPlanParams{
 		HouseID:  houseID,
 		PeriodID: periodID,
 		DateFrom: database.Now(),
