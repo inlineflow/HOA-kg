@@ -7,8 +7,7 @@ import (
 
 func Handlers(cfg *models.APIConfig) map[string]http.HandlerFunc {
 	u := &UI{cfg}
-
-	return map[string]http.HandlerFunc{
+	routes := map[string]http.HandlerFunc{
 		"/":                                     u.RedirectRoot,
 		"/favicon.ico":                          u.Favicon,
 		"GET /houses":                           u.Houses,
@@ -16,8 +15,12 @@ func Handlers(cfg *models.APIConfig) map[string]http.HandlerFunc {
 		"GET /houses/create":                    u.CreateHouseForm,
 		"POST /houses/create":                   u.HandleCreateHouse,
 		"GET /houses/{house_id}/flats/create":   u.FlatsCreate,
-		"POST /houses/{house_id}/flats":         u.HandleCreateFlats,
+		"POST /houses/{house_id}/flats":         u.HandleCreateFlat,
 		"GET /houses/{house_id}/payment-plans":  u.ServePaymentPlans,
-		"POST /houses/{house_id}/payment-plans": u.CreatePaymentPlan,
+		"POST /houses/{house_id}/payment-plans": u.HandleCreatePaymentPlan,
+		"GET /houses/{house_id}/flats/validation/flat_number":     u.ValidateFlatNumber,
+
 	}
+
+	return routes
 }

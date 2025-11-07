@@ -11,6 +11,49 @@ import (
 	"github.com/google/uuid"
 )
 
+const flatNumberExistsInHouse = `-- name: FlatNumberExistsInHouse :one
+select exists (
+  select 1 from flat
+  where flat_number = $1
+  and house_id = $2
+)
+`
+
+type FlatNumberExistsInHouseParams struct {
+	FlatNumber int32
+	HouseID    uuid.UUID
+}
+
+func (q *Queries) FlatNumberExistsInHouse(ctx context.Context, arg FlatNumberExistsInHouseParams) (bool, error) {
+	row := q.db.QueryRow(ctx, flatNumberExistsInHouse, arg.FlatNumber, arg.HouseID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const getFlatWithNumber = `-- name: GetFlatWithNumber :one
+select flat_id, flat_number, house_id, area from flat
+where flat_number = $1
+and house_id = $2
+`
+
+type GetFlatWithNumberParams struct {
+	FlatNumber int32
+	HouseID    uuid.UUID
+}
+
+func (q *Queries) GetFlatWithNumber(ctx context.Context, arg GetFlatWithNumberParams) (Flat, error) {
+	row := q.db.QueryRow(ctx, getFlatWithNumber, arg.FlatNumber, arg.HouseID)
+	var i Flat
+	err := row.Scan(
+		&i.FlatID,
+		&i.FlatNumber,
+		&i.HouseID,
+		&i.Area,
+	)
+	return i, err
+}
+
 const getFlatsForHouse = `-- name: GetFlatsForHouse :many
 select flat_id, flat_number, house_id, area from flat
 where house_id = $1

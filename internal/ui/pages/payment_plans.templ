@@ -1,12 +1,13 @@
-package ui
+package pages
 
 import "hypermedia/internal/models"
+import "hypermedia/internal/ui/layouts"
 import "fmt"
 import "github.com/google/uuid"
 import "time"
 
 templ PaymentPlans(plans []models.PaymentPlan, props PaymentPlanFormProps) {
-	@SidebarLayout("Планы сборов", props.houseID) {
+	@layout.SidebarLayout("Планы сборов", props.HouseID) {
 		@templ.Fragment("partial") {
 			<div class="flex flex-col gap-4">
 				@PaymentPlanControls(props)
@@ -35,14 +36,14 @@ templ PaymentPlanControls(props PaymentPlanFormProps) {
 }
 
 type PaymentPlanFormProps struct {
-	houseID uuid.UUID
-	periods []models.Period
+	HouseID uuid.UUID
+	Periods []models.Period
 }
 
 templ CreatePaymentPlanForm(props PaymentPlanFormProps) {
 	<div class="flex flex-col gap-2">
 		<h2 class="text-center text-xl font-bold">Создание плана сборов</h2>
-		<form hx-post={ "/houses/" + props.houseID.String() + "/payment-plans" } hx-push-url="true">
+		<form hx-post={ "/houses/" + props.HouseID.String() + "/payment-plans" } hx-push-url="true">
 			<div class="flex flex-col gap-4">
 				<div x-data="{period: ''}" class="flex gap-4 items-center justify-center">
 					<select @change="period = $event.target.value" id="period-select" name="period" class="select">
@@ -58,7 +59,7 @@ templ CreatePaymentPlanForm(props PaymentPlanFormProps) {
 						id="monthly-values"
 					>
 						<option selected disabled></option>
-						for _, p := range props.periods {
+						for _, p := range props.Periods {
 							if p.Group == "monthly" {
 								<option value={ p.PeriodID.String() }>{ p.Description }</option>
 							}

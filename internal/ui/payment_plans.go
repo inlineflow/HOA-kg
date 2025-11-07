@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"hypermedia/internal/database"
+	"hypermedia/internal/ui/pages"
 	"hypermedia/internal/models"
 	"net/http"
 
@@ -37,18 +38,18 @@ func (u *UI) ServePaymentPlans(w http.ResponseWriter, r *http.Request) {
 	}
 	periods := models.Map(dbPeriods, models.ToPeriodVM)
 
-	props := PaymentPlanFormProps{
-		houseID: houseID,
-		periods: periods,
+	props := pages.PaymentPlanFormProps{
+		HouseID: houseID,
+		Periods: periods,
 	}
 	fmt.Println(props)
 	fmt.Println(servicePlans)
 	// w.Write([]byte("hello world"))
-	templ.Handler(PaymentPlans(servicePlans, props), opts...).ServeHTTP(w, r)
+	templ.Handler(pages.PaymentPlans(servicePlans, props), opts...).ServeHTTP(w, r)
 
 }
 
-func (u *UI) CreatePaymentPlan(w http.ResponseWriter, r *http.Request) {
+func (u *UI) HandleCreatePaymentPlan(w http.ResponseWriter, r *http.Request) {
 	houseID, err := uuid.Parse(r.PathValue("house_id"))
 	if err != nil {
 		HandleError(w, r, err, 400)

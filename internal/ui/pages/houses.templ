@@ -1,0 +1,108 @@
+package pages
+
+import "hypermedia/internal/models"
+import "fmt"
+import "hypermedia/internal/ui/layouts"
+
+templ ServeHouses(houses []models.House) {
+	@layout.NoSidebarLayout("ТСЖ") {
+		@templ.Fragment("partial") {
+			<div class="flex flex-col gap-4">
+				@HousesIndexControls()
+				<!-- <div class="flex items-center justify-center max-w-64"> -->
+				@HousesGrid(houses)
+				<!-- </div> -->
+			</div>
+		}
+	}
+}
+
+templ CreateHouse() {
+	@layout.NoSidebarLayout("Создание дома") {
+		@templ.Fragment("partial") {
+			<div>
+				<form hx-post="/houses/create" hx-push-url="true">
+					<fieldset class="fieldset bg-base-300 border-base-200 rounded-box w-xs border p-4">
+						<legend class="fieldset-legend">Дом</legend>
+						<label for="address" class="label">Адрес</label>
+						<input name="address" type="text" id="address" class="input"/>
+						<button class="btn btn-neutral mt-4">Создать</button>
+					</fieldset>
+				</form>
+			</div>
+		}
+	}
+}
+
+templ HousesIndexControls() {
+	<div class="flex justify-center">
+		<a href="/houses/create" class="btn btn-primary">Добавить дом</a>
+	</div>
+}
+
+templ HousesGrid(houses []models.House) {
+	<div class="grid grid-cols-4 gap-4">
+		for _, h := range houses {
+			<div class="card card-lg shadow-md">
+				<a href={ "/houses/" + h.ID.String() + "/flats" } hx-boost="false">
+					<div class="card-body text-lg">
+						<p>{ h.Address }</p>
+					</div>
+				</a>
+			</div>
+		}
+	</div>
+}
+
+templ HouseView(h models.House, flats []models.Flat) {
+	@layout.SidebarLayout(h.Address, h.ID) {
+		@templ.Fragment("partial") {
+			@House(h, flats)
+		}
+	}
+}
+
+templ House(h models.House, flats []models.Flat) {
+	<h2 class="text-2xl font-bold mb-24">「{ h.Address }」</h2>
+	<div class="flex flex-col gap-4">
+		<!-- @CreateFlatsForm(h) -->
+		@HouseManagementControls(h)
+		@FlatsTable(flats)
+	</div>
+}
+
+templ HouseManagementControls(h models.House) {
+	<div x-data>
+		<a class="btn btn-neutral btn-outline" href={ fmt.Sprintf("/houses/%s/flats/create", h.ID) }>Создание карточек</a>
+		<!-- <button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание карточек</button> -->
+		<!-- <dialog x-ref="modal" class="modal" id="controls-modal"> -->
+		<!-- 	<div class="modal-box flex flex-col gap-8 py-8 justify-center items-center"> -->
+		<!-- 		<button @click="$refs.modal.close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button> -->
+		<!-- 		@CreateFlatsForm(h) -->
+		<!-- 		<button @click="$refs.modal.close()" class="btn btn-neutral self-start btn-outline">Закрыть</button> -->
+		<!-- 	</div> -->
+		<!-- </dialog> -->
+	</div>
+}
+
+
+
+
+templ FlatsTable(flats []models.Flat) {
+	<table class="table rounded-box border border-base-content/5 bg-base-100">
+		<thead>
+			<tr>
+				<th>
+					Номер квартиры
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, f := range flats {
+				<tr>
+					<td>{ f.FlatNumber }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
