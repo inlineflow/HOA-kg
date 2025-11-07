@@ -36,6 +36,7 @@ CREATE table flat_owner(
   flat_owner_id UUID default uuid_generate_v4() PRIMARY KEY,
   flat_id UUID,
   resident_id UUID NOT NULL, 
+  owner_up_to timestamptz,
 
   CONSTRAINT flat_owner_flat
     FOREIGN KEY (flat_id)

@@ -55,24 +55,36 @@ func (q *Queries) GetFlatWithNumber(ctx context.Context, arg GetFlatWithNumberPa
 }
 
 const getFlatsForHouse = `-- name: GetFlatsForHouse :many
-select flat_id, flat_number, house_id, area from flat
+select f.flat_id, f.flat_number, f.house_id, f.area, r.resident_id, r.flat_id, r.phone_number, r.fio from flat f
+inner join flat_owner fo on f.flat_id = fo.flat_id
+inner join resident r on fo.resident_id = r.resident_id
 where house_id = $1
+and fo.owner_up_to is null
 `
 
-func (q *Queries) GetFlatsForHouse(ctx context.Context, houseID uuid.UUID) ([]Flat, error) {
+type GetFlatsForHouseRow struct {
+	Flat     Flat
+	Resident Resident
+}
+
+func (q *Queries) GetFlatsForHouse(ctx context.Context, houseID uuid.UUID) ([]GetFlatsForHouseRow, error) {
 	rows, err := q.db.Query(ctx, getFlatsForHouse, houseID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Flat
+	var items []GetFlatsForHouseRow
 	for rows.Next() {
-		var i Flat
+		var i GetFlatsForHouseRow
 		if err := rows.Scan(
-			&i.FlatID,
-			&i.FlatNumber,
-			&i.HouseID,
-			&i.Area,
+			&i.Flat.FlatID,
+			&i.Flat.FlatNumber,
+			&i.Flat.HouseID,
+			&i.Flat.Area,
+			&i.Resident.ResidentID,
+			&i.Resident.FlatID,
+			&i.Resident.PhoneNumber,
+			&i.Resident.Fio,
 		); err != nil {
 			return nil, err
 		}
@@ -84,7 +96,26 @@ func (q *Queries) GetFlatsForHouse(ctx context.Context, houseID uuid.UUID) ([]Fl
 	return items, nil
 }
 
-type InsertFlatsParams struct {
+const insertFlat = `-- name: InsertFlat :one
+insert into flat(flat_number, house_id, area)
+values ($1, $2, $3)
+RETURNING flat_id, flat_number, house_id, area
+`
+
+type InsertFlatParams struct {
 	FlatNumber int32
 	HouseID    uuid.UUID
+	Area       int32
+}
+
+func (q *Queries) InsertFlat(ctx context.Context, arg InsertFlatParams) (Flat, error) {
+	row := q.db.QueryRow(ctx, insertFlat, arg.FlatNumber, arg.HouseID, arg.Area)
+	var i Flat
+	err := row.Scan(
+		&i.FlatID,
+		&i.FlatNumber,
+		&i.HouseID,
+		&i.Area,
+	)
+	return i, err
 }

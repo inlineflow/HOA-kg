@@ -34,6 +34,7 @@ type FlatOwner struct {
 	FlatOwnerID uuid.UUID
 	FlatID      uuid.UUID
 	ResidentID  uuid.UUID
+	OwnerUpTo   pgtype.Timestamptz
 }
 
 type House struct {

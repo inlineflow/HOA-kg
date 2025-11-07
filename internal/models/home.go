@@ -19,15 +19,19 @@ func ToHouseVM(dbHouse database.House) House {
 }
 
 type Flat struct {
-	ID         uuid.UUID
-	HouseID    uuid.UUID
-	FlatNumber int
+	ID            uuid.UUID
+	HouseID       uuid.UUID
+	FlatNumber    int
+	Area          int
+	FlatOwnerName string
 }
 
-func ToFlatVM(dbFlat database.Flat) Flat {
+func ToFlatVM(arg database.GetFlatsForHouseRow) Flat {
 	return Flat{
-		ID:         dbFlat.FlatID,
-		HouseID:    dbFlat.HouseID,
-		FlatNumber: int(dbFlat.FlatNumber),
+		ID:            arg.Flat.FlatID,
+		HouseID:       arg.Flat.HouseID,
+		FlatNumber:    int(arg.Flat.FlatNumber),
+		Area:          int(arg.Flat.Area),
+		FlatOwnerName: arg.Resident.Fio,
 	}
 }

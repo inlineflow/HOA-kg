@@ -3,8 +3,10 @@ package pages
 import "hypermedia/internal/models"
 import "fmt"
 import "hypermedia/internal/ui/layouts"
+import "github.com/google/uuid"
 
 templ ServeHouses(houses []models.House) {
+	"github.com/google/uuid"
 	@layout.NoSidebarLayout("ТСЖ") {
 		@templ.Fragment("partial") {
 			<div class="flex flex-col gap-4">
@@ -67,7 +69,7 @@ templ House(h models.House, flats []models.Flat) {
 	<div class="flex flex-col gap-4">
 		<!-- @CreateFlatsForm(h) -->
 		@HouseManagementControls(h)
-		@FlatsTable(flats)
+		@FlatsTable(h.ID, flats)
 	</div>
 }
 
@@ -85,22 +87,27 @@ templ HouseManagementControls(h models.House) {
 	</div>
 }
 
-
-
-
-templ FlatsTable(flats []models.Flat) {
+templ FlatsTable(houseID uuid.UUID, flats []models.Flat) {
 	<table class="table rounded-box border border-base-content/5 bg-base-100">
 		<thead>
 			<tr>
 				<th>
 					Номер квартиры
 				</th>
+				<th>
+					Имя владельца
+				</th>
+				<th>
+					Площадь
+				</th>
 			</tr>
 		</thead>
 		<tbody>
 			for _, f := range flats {
-				<tr>
+				<tr hx-get="/houses/" hx-trigger="dblclick">
 					<td>{ f.FlatNumber }</td>
+					<td>{ f.FlatOwnerName }</td>
+					<td>{ f.Area }</td>
 				</tr>
 			}
 		</tbody>

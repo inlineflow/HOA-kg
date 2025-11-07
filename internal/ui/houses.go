@@ -108,6 +108,3 @@ func (u *UI) HouseView(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(pages.HouseView(h, flats), opts...).ServeHTTP(w, r)
 
 }
-
-
-
