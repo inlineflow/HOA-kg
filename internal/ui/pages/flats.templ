@@ -6,85 +6,76 @@ import "fmt"
 import "hypermedia/internal/ui/components/icons"
 
 templ CreateFlats(houseID uuid.UUID) {
-	@layout.SidebarLayout("Создание карточки", houseID) {
-		@templ.Fragment("partial") {
-			@CreateFlatsForm(houseID)
-		}
-	}
+@layout.SidebarLayout("Создание карточки", houseID) {
+@templ.Fragment("partial") {
+@CreateFlatsForm(houseID)
+}
+}
 }
 
 templ CreateFlatsForm(houseID uuid.UUID) {
-	<form
-		hx-post={ "/houses/" + houseID.String() + "/flats" }
-		hx-push-url="true"
-		class="rounded-box border-2 border-neutral-300 px-12 py-8"
-	>
-		<div class="flex flex-col">
-			@CreateFlatsFormField(CreateFlatsFormFieldProps{
-				LabelMsg:  "Номер квартиры",
-				ID:        "flat_number",
-				InputType: "number",
-				HouseID:   houseID,
-			})
-			@CreateFlatsFormField(CreateFlatsFormFieldProps{
-				LabelMsg:  "Имя владельца",
-				ID:        "flat_owner_name",
-				InputType: "text",
-				HouseID:   houseID,
-			})
-			@CreateFlatsFormField(CreateFlatsFormFieldProps{
-				LabelMsg:  "Номер телефона владельца",
-				ID:        "flat_owner_phone_number",
-				InputType: "text",
-				HouseID:   houseID,
-			})
-			@CreateFlatsFormField(CreateFlatsFormFieldProps{
-				LabelMsg:  "Площадь",
-				ID:        "flat_area",
-				InputType: "number",
-				HouseID:   houseID,
-			})
-			<button class="btn btn-primary mt-12">Создать</button>
-		</div>
-	</form>
+<form hx-post={ "/houses/" + houseID.String() + "/flats" } hx-push-url="true"
+  class="rounded-box border-2 border-neutral-300 px-12 py-8">
+  <div class="flex flex-col">
+    @CreateFlatsFormField(CreateFlatsFormFieldProps{
+    LabelMsg: "Номер квартиры",
+    ID: "flat_number",
+    InputType: "number",
+    HouseID: houseID,
+    ToBeValidated: true,
+    })
+    @CreateFlatsFormField(CreateFlatsFormFieldProps{
+    LabelMsg: "Имя владельца",
+    ID: "flat_owner_name",
+    InputType: "text",
+    HouseID: houseID,
+    })
+    @CreateFlatsFormField(CreateFlatsFormFieldProps{
+    LabelMsg: "Номер телефона владельца",
+    ID: "flat_owner_phone_number",
+    InputType: "text",
+    HouseID: houseID,
+    })
+    @CreateFlatsFormField(CreateFlatsFormFieldProps{
+    LabelMsg: "Площадь",
+    ID: "flat_area",
+    InputType: "number",
+    })
+    <button class="btn btn-primary mt-12">Создать</button>
+  </div>
+</form>
 }
 
 type CreateFlatsFormFieldProps struct {
-	LabelMsg  string
-	ID        string
-	Error     error
-	InputType string
-	HouseID   uuid.UUID
-	Value     string
+LabelMsg string
+ID string
+Error error
+InputType string
+HouseID uuid.UUID
+Value string
+ToBeValidated bool
 }
 
 templ CreateFlatsFormField(props CreateFlatsFormFieldProps) {
-	<div class="flex flex-col gap-2">
-		<label class="label" for={ props.ID }>{ props.LabelMsg }</label>
-		<input
-			hx-get={ fmt.Sprintf("/houses/%s/flats/validation/%s", props.HouseID, props.ID) }
-			hx-target="closest div"
-			hx-trigger="change, keyup delay:200ms changed"
-			hx-push-url="false"
-			if props.Value !="" {
-				value={ props.Value }
-			}
-			class={ "input " , templ.KV(" outline-error outline-2 focus:outline-error focus:border-error", props.Error !=nil ) }
-			name={ props.ID }
-			id={ props.ID }
-			type={ props.InputType }
-		/>
-		@FlatsFormErrorField(props.Error, props.ID)
-	</div>
+<div class="flex flex-col gap-2">
+  <label class="label" for={ props.ID }>{ props.LabelMsg }</label>
+  <input if props.ToBeValidated { hx-get={ fmt.Sprintf("/houses/%s/flats/validation/%s", props.HouseID, props.ID) }
+    hx-target="closest div" hx-trigger="change, keyup delay:200ms changed" hx-push-url="false" } if props.Value !="" {
+    value={ props.Value } } class={ "input " , templ.KV(" outline-error outline-2 focus:outline-error
+    focus:border-error", props.Error !=nil ) } name={ props.ID } id={ props.ID } type={ props.InputType } />
+  @FlatsFormErrorField(props.Error, props.ID)
+</div>
 }
 
 templ FlatsFormErrorField(err error, fieldID string) {
-	<div class={ "flex text-error items-center" , templ.KV("invisible", err==nil ) } id={ fieldID + "_error" }>
-		@icons.OctagonBooststrap(templ.Attributes{
-			"fill": "red",
-		})
-		if err != nil {
-			<span class="my-auto mx-2">{ err.Error() }</span>
-		}
-	</div>
+<div class={ "flex text-error items-center" , templ.KV("invisible", err==nil ) } id={ fieldID + "_error" }>
+  @icons.OctagonBooststrap(templ.Attributes{
+  "fill": "red",
+  })
+  <span class="my-auto mx-2">
+    if err != nil {
+    { err.Error() }
+    }
+  </span>
+</div>
 }

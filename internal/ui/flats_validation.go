@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"hypermedia/internal/database"
 	"hypermedia/internal/ui/pages"
-	"io"
 	"net/http"
-	"os"
 	"strconv"
 
-	"github.com/a-h/templ"
 	"github.com/google/uuid"
 )
 
@@ -51,12 +48,13 @@ func (u *UI) ValidateFlatNumber(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c := pages.CreateFlatsFormField(
 			pages.CreateFlatsFormFieldProps{
-				LabelMsg:  m["flat_number"],
-				ID:        "flat_number",
-				Error:     err,
-				InputType: "number",
-				HouseID:   houseID,
-				Value:     r.Form.Get("flat_number"),
+				LabelMsg:      m["flat_number"],
+				ID:            "flat_number",
+				Error:         err,
+				InputType:     "number",
+				HouseID:       houseID,
+				Value:         r.Form.Get("flat_number"),
+				ToBeValidated: true,
 			},
 		)
 		c.Render(context.Background(), w)
@@ -70,12 +68,13 @@ func (u *UI) ValidateFlatNumber(w http.ResponseWriter, r *http.Request) {
 
 	c := pages.CreateFlatsFormField(
 		pages.CreateFlatsFormFieldProps{
-			LabelMsg:  m["flat_number"],
-			ID:        "flat_number",
-			Error:     err,
-			InputType: "number",
-			HouseID:   houseID,
-			Value:     r.Form.Get("flat_number"),
+			LabelMsg:      m["flat_number"],
+			ID:            "flat_number",
+			Error:         err,
+			InputType:     "number",
+			HouseID:       houseID,
+			Value:         r.Form.Get("flat_number"),
+			ToBeValidated: true,
 		},
 	)
 

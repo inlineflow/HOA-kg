@@ -31,5 +31,5 @@ func (u *UI) HandleCreateFlat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	 fmt.Println(r.Form)
+	fmt.Println(r.Form)
 }
