@@ -148,7 +148,7 @@ func CreateFlatsForm(houseID uuid.UUID) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">Номер телефона владельца</label><div class=\"input\"><span class=\"text-neutral-400\">+996</span> <input id=\"flat_owner_phone_number\" x-model=\"displayPhoneNumber\" @input=\"updatePhoneNumber($event)\" type=\"tel\" inputmode=\"numeric\" x-mask=\"(999) 999-999\"> <input type=\"hidden\" name=\"flat_owner_phone_number\" x-model=\"actualPhoneNumber\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">Номер телефона владельца</label><div class=\"input\"><span class=\"text-neutral-400\">+996</span> <input id=\"flat_owner_phone_number\" x-model=\"displayPhoneNumber\" @input=\"updatePhoneNumber($event)\" type=\"tel\" inputmode=\"numeric\" x-mask=\"(999) 999-999\" placeholder=\"(123) 456-789\"> <input type=\"hidden\" name=\"flat_owner_phone_number\" x-model=\"actualPhoneNumber\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -214,7 +214,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 93, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 94, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -227,7 +227,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.LabelMsg)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 93, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 94, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -254,7 +254,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/houses/%s/flats/validation/%s", props.HouseID, props.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 96, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 97, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -273,7 +273,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 102, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 103, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -310,7 +310,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 108, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 109, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -323,7 +323,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 109, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 110, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -336,7 +336,7 @@ func CreateFlatsFormField(props CreateFlatsFormFieldProps, attrs ...templ.Attrib
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(props.InputType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 110, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 111, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -404,7 +404,7 @@ func FlatsFormErrorField(err error, fieldID string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(fieldID + "_error")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 117, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 118, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -428,7 +428,7 @@ func FlatsFormErrorField(err error, fieldID string) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 123, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/flats.templ`, Line: 124, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
