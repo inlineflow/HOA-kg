@@ -46,7 +46,7 @@ func BaseLayout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/assets/css/styles.css\"><script src=\"/assets/js/htmx.min.js\"></script><script type=\"module\" src=\"/assets/js/htmx-ext.js\"></script><script type=\"module\" src=\"/assets/js/alpinejs@3.15.0.js\"></script></head><body hx-boost=\"true\" hx-target=\"main\"><header class=\"p-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/assets/css/styles.css\"><script defer type=\"module\" src=\"/assets/js/htmx.min.js\"></script><script defer src=\"/assets/js/htmx-ext.js\"></script><script defer src=\"/assets/js/alpinejs-mask@3.15.0.js\"></script><script defer src=\"/assets/js/alpinejs@3.15.0.js\"></script></head><body hx-boost=\"true\" hx-target=\"main\"><header class=\"p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

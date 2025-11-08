@@ -39,6 +39,13 @@ func (u *UI) HandleCreateFlat(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, r, err, 500)
 		return
 	}
+
+	err = u.parseFormAndValidateFlatNumber(r, houseID)
+	if err != nil {
+		HandleError(w, r, err, 500)
+		return
+	}
+
 	flatNumber, err := strconv.Atoi(r.Form.Get("flat_number"))
 	if err != nil {
 		HandleError(w, r, err, 500)

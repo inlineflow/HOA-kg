@@ -4,9 +4,9 @@ import "hypermedia/internal/models"
 import "fmt"
 import "hypermedia/internal/ui/layouts"
 import "github.com/google/uuid"
+import "hypermedia/internal/ui/components/icons"
 
 templ ServeHouses(houses []models.House) {
-	"github.com/google/uuid"
 	@layout.NoSidebarLayout("ТСЖ") {
 		@templ.Fragment("partial") {
 			<div class="flex flex-col gap-4">
@@ -74,7 +74,7 @@ templ House(h models.House, flats []models.Flat) {
 }
 
 templ HouseManagementControls(h models.House) {
-	<div x-data>
+	<div x-data class="self-center">
 		<a class="btn btn-neutral btn-outline" href={ fmt.Sprintf("/houses/%s/flats/create", h.ID) }>Создание карточек</a>
 		<!-- <button class="btn btn-neutral btn-outline" @click="$refs.modal.showModal()">Создание карточек</button> -->
 		<!-- <dialog x-ref="modal" class="modal" id="controls-modal"> -->
@@ -100,14 +100,25 @@ templ FlatsTable(houseID uuid.UUID, flats []models.Flat) {
 				<th>
 					Площадь
 				</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			for _, f := range flats {
-				<tr hx-get="/houses/" hx-trigger="dblclick">
+				<tr>
 					<td>{ f.FlatNumber }</td>
 					<td>{ f.FlatOwnerName }</td>
-					<td>{ f.Area }</td>
+					<td><span>{ f.Area }</span>м<sup>2</sup></td>
+					<td>
+						<div class="dropdown dropdown-right">
+							<div tabindex="0" role="button" class="btn btn-xs btn-ghost">
+								@icons.ChevronDown()
+							</div>
+							<ul tabindex="-1" class="dropdown-content menu rounded-box bg-base-100 z-1 w-52 p-2 shadow-sm">
+								<li><a href={ fmt.Sprintf("/houses/%s/flats/%s", houseID, f.ID) }>Карточка</a></li>
+							</ul>
+						</div>
+					</td>
 				</tr>
 			}
 		</tbody>

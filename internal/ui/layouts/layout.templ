@@ -13,9 +13,10 @@ templ BaseLayout(title string) {
 			<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
 			<title>{ title }</title>
 			<link rel="stylesheet" href="/assets/css/styles.css"/>
-			<script src="/assets/js/htmx.min.js"></script>
-			<script type="module" src="/assets/js/htmx-ext.js"></script>
-			<script type="module" src="/assets/js/alpinejs@3.15.0.js"></script>
+			<script defer type="module" src="/assets/js/htmx.min.js"></script>
+			<script defer src="/assets/js/htmx-ext.js"></script>
+			<script defer src="/assets/js/alpinejs-mask@3.15.0.js"></script>
+			<script defer src="/assets/js/alpinejs@3.15.0.js"></script>
 		</head>
 		<body hx-boost="true" hx-target="main">
 			<header class="p-4">

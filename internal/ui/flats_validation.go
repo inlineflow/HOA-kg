@@ -28,44 +28,7 @@ func (u *UI) ValidateFlatNumber(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := getValidate()
-	err = r.ParseForm()
-	if err != nil {
-		HandleError(w, r, err, 500)
-		return
-	}
-
-	flatNumber, err := strconv.Atoi(r.Form.Get("flat_number"))
-	if err != nil {
-		HandleError(w, r, err, 500)
-		return
-	}
-
-	exists, err := u.cfg.DB.FlatNumberExistsInHouse(r.Context(), database.FlatNumberExistsInHouseParams{
-		FlatNumber: int32(flatNumber),
-		HouseID:    houseID,
-	})
-
-	if err != nil {
-		c := pages.CreateFlatsFormField(
-			pages.CreateFlatsFormFieldProps{
-				LabelMsg:      m["flat_number"],
-				ID:            "flat_number",
-				Error:         err,
-				InputType:     "number",
-				HouseID:       houseID,
-				Value:         r.Form.Get("flat_number"),
-				ToBeValidated: true,
-			},
-		)
-		c.Render(context.Background(), w)
-		return
-	}
-
-	err = nil
-	if exists {
-		err = fmt.Errorf("Квартира с номером: %d уже существует", flatNumber)
-	}
-
+	err = u.parseFormAndValidateFlatNumber(r, houseID)
 	c := pages.CreateFlatsFormField(
 		pages.CreateFlatsFormFieldProps{
 			LabelMsg:      m["flat_number"],
@@ -80,4 +43,27 @@ func (u *UI) ValidateFlatNumber(w http.ResponseWriter, r *http.Request) {
 
 	c.Render(context.Background(), w)
 
+}
+
+func (u *UI) parseFormAndValidateFlatNumber(r *http.Request, houseID uuid.UUID) error {
+	err := r.ParseForm()
+	if err != nil {
+		return err
+	}
+
+	flatNumber, err := strconv.Atoi(r.Form.Get("flat_number"))
+	if err != nil {
+		return err
+	}
+
+	exists, err := u.cfg.DB.FlatNumberExistsInHouse(r.Context(), database.FlatNumberExistsInHouseParams{
+		FlatNumber: int32(flatNumber),
+		HouseID:    houseID,
+	})
+
+	if exists {
+		return fmt.Errorf("Квартира с номером: %d уже существует", flatNumber)
+	}
+
+	return nil
 }
