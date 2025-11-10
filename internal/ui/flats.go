@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"hypermedia/internal/database"
+	"hypermedia/internal/models"
 	"hypermedia/internal/ui/pages"
 	"net/http"
 	"strconv"
@@ -88,4 +89,22 @@ func (u *UI) HandleCreateFlat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/houses/%s/flats", houseID), http.StatusSeeOther)
+}
+
+func (u *UI) ServeFlat(w http.ResponseWriter, r *http.Request) {
+	houseID, err := uuid.Parse(r.PathValue("house_id"))
+	if err != nil {
+		HandleError(w, r, err, 500)
+		return
+	}
+
+	flatID, err := uuid.Parse(r.PathValue("flat_id"))
+	if err != nil {
+		HandleError(w, r, err, 500)
+		return
+	}
+
+	flat, err := u.cfg.DB.GetFlatByID(r.Context(), flatID)
+
+	RenderAndServe(w, r, pages.Flat(houseID, models.ToFlatVM(flat.Flat)))
 }

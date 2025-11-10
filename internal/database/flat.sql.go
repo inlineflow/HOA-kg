@@ -31,6 +31,35 @@ func (q *Queries) FlatNumberExistsInHouse(ctx context.Context, arg FlatNumberExi
 	return exists, err
 }
 
+const getFlatByID = `-- name: GetFlatByID :one
+select f.flat_id, f.flat_number, f.house_id, f.area, r.resident_id, r.flat_id, r.phone_number, r.fio from flat f
+inner join flat_owner fo on f.flat_id = fo.flat_id
+inner join resident r on fo.resident_id = r.resident_id
+where f.flat_id = $1
+and fo.owner_up_to is null
+`
+
+type GetFlatByIDRow struct {
+	Flat     Flat
+	Resident Resident
+}
+
+func (q *Queries) GetFlatByID(ctx context.Context, flatID uuid.UUID) (GetFlatByIDRow, error) {
+	row := q.db.QueryRow(ctx, getFlatByID, flatID)
+	var i GetFlatByIDRow
+	err := row.Scan(
+		&i.Flat.FlatID,
+		&i.Flat.FlatNumber,
+		&i.Flat.HouseID,
+		&i.Flat.Area,
+		&i.Resident.ResidentID,
+		&i.Resident.FlatID,
+		&i.Resident.PhoneNumber,
+		&i.Resident.Fio,
+	)
+	return i, err
+}
+
 const getFlatWithNumber = `-- name: GetFlatWithNumber :one
 select flat_id, flat_number, house_id, area from flat
 where flat_number = $1

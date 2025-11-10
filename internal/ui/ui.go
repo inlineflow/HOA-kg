@@ -18,8 +18,8 @@ func Handlers(cfg *models.APIConfig) map[string]http.HandlerFunc {
 		"POST /houses/{house_id}/flats":         u.HandleCreateFlat,
 		"GET /houses/{house_id}/payment-plans":  u.ServePaymentPlans,
 		"POST /houses/{house_id}/payment-plans": u.HandleCreatePaymentPlan,
-		"GET /houses/{house_id}/flats/validation/flat_number":     u.ValidateFlatNumber,
-
+		"GET /houses/{house_id}/flats/validation/flat_number": u.ValidateFlatNumber,
+		"GET /houses/{house_id}/flats/{flat_id}":              u.ServeFlat,
 	}
 
 	return routes

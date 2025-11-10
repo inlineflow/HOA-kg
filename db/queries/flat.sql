@@ -21,3 +21,10 @@ select exists (
   where flat_number = $1
   and house_id = $2
 );
+
+-- name: GetFlatByID :one
+select sqlc.embed(f), sqlc.embed(r) from flat f
+inner join flat_owner fo on f.flat_id = fo.flat_id
+inner join resident r on fo.resident_id = r.resident_id
+where f.flat_id = $1
+and fo.owner_up_to is null;

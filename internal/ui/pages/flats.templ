@@ -4,6 +4,7 @@ import "github.com/google/uuid"
 import "hypermedia/internal/ui/layouts"
 import "fmt"
 import "hypermedia/internal/ui/components/icons"
+import "hypermedia/internal/models"
 
 templ CreateFlats(houseID uuid.UUID) {
 	@layout.SidebarLayout("Создание карточки", houseID) {
@@ -125,4 +126,20 @@ templ FlatsFormErrorField(err error, fieldID string) {
 			}
 		</span>
 	</div>
+}
+
+type FlatPageProps struct {
+	Flat      models.Flat
+	FlatOwner models.FlatOwner
+}
+
+templ Flat(houseID uuid.UUID, flat models.Flat) {
+	@layout.SidebarLayout(fmt.Sprintf("Карточка"), houseID) {
+		<div class="tabs tabs-lift">
+			<input type="radio" aria-label="Tab 1" name="tab 1" class="tab"/>
+			<div class="tab-content"></div>
+			<input type="radio" aria-label="Tab 1" name="tab 2" class="tab"/>
+			<div class="tab-content"></div>
+		</div>
+	}
 }
